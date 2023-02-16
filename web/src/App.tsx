@@ -1,11 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css'
 import { GamePiece } from './components/GamePiece'
+import { fetchBoard } from './services/backendservice';
 
 function App() {
 
-  const [width, setWidth] = useState(12);
-  const [height, setHeight] = useState(12);
+  const [width, setWidth] = useState<number>(12);
+  const [height, setHeight] = useState<number>(12);
+
+  const [board, setBoard] = useState<number[]>([]);
+
+  useEffect(() => {
+    fetchBoard().then(data => {
+      setBoard(data);
+    })
+  }, [])
+
 
   return (
     <div className="container">
@@ -26,7 +36,7 @@ function App() {
         <div className="min-h-screen flex items-center justify-center">
         <div className={`grid grid-cols-${width} grid-rows-${height} gap-1`}>
           {
-            [...Array(width * height)].map((e, i) => <GamePiece isFlipped={(Math.floor(Math.random() * 2)) === 0}/>)
+            board.map((e, i) => <GamePiece key={i} state={e}/>)
           }
         </div>
       </div>

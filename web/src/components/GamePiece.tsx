@@ -1,19 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
-export const GamePiece = ({isFlipped}: {
-    isFlipped: boolean
+export const GamePiece = ({state}: {
+    state: number
 }) => {
-
-    const [flipped, setFlipped] = useState(isFlipped);
+    
+    const colors = ["bg-black", "bg-white"];
+    const [colorIndex, setColorIndex] = useState(state);
+    const [color, setColor] = useState(colors[colorIndex]);
+    const [angle, setAngle] = useState<number>(0);
 
     const onClick = () => {
-        setFlipped(!flipped);
+        setColorIndex((colorIndex + 1) % colors.length);
+        setAngle(angle == 0 ? 180 : 0);
     }
 
+    useEffect(() => {
+        setColor(colorIndex < colors.length ? colors[colorIndex] : "bg-transparent")
+    }, [colorIndex])
+
     return (
-        <div className={`${flipped ? "rotate-x-180" : "rotate-x-0"} hover:cursor-pointer`} onClick={onClick}>
-            <div className={`${flipped ? " bg-black" : "bg-white"} delay-300 rounded-full w-12 h-12`} />
+        <div className={`rotate-x-${angle} hover:cursor-pointer`} onClick={onClick}>
+            <div className={`${color} delay-300 rounded-full w-12 h-12`} />
         </div>
     );
 }
