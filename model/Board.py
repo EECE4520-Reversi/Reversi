@@ -12,7 +12,12 @@ class board():
         self.mySize = size
 
     def get_board(self):
-        return self.matrix
+        # Return 1D array of all tile states
+        flat_board = []
+        for row in self.matrix:
+            for tile in row:
+                flat_board.append(tile.get_player())
+        return flat_board
 
     def initialize_board(self):
         # create all tile objects with correct positions
