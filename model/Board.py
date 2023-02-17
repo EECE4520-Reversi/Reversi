@@ -1,5 +1,3 @@
-from Logic import logic
-from Move import move
 from Tile import tile
 
 class board():
@@ -54,7 +52,7 @@ class board():
     def update_board(self, flipList, player):
         # updates tile
         for pos in flipList:
-            self.matrix[pos[0]][pos[1]].player = player
+            self.matrix[pos[0]][pos[1]].set_player(player)
         self.get_score()
 
 

@@ -1,6 +1,5 @@
 from Move import move
 from Board import board
-from Tile import tile
 
 class logic():
 
@@ -41,12 +40,12 @@ class logic():
             temp = []
             checked += 1
 
-            while ( 0 <= x < self.size and 0 <= y <= self.size ) and currentTile.get_player() != move.get_player():
+            while ( 0 <= x < self.size and 0 <= y <= self.size ) and currentTile.get_player() != self.current_player:
                 temp.append(currentTile)
                 currentTile = self.board(currentTile.getX + tile(0), currentTile.getY + tile(1))
             
             # if path is valid, save flippable tiles
-            if (0 <= x < self.size and 0 <= y < self.size) and currentTile.get_player() == move.get_player():
+            if (0 <= x < self.size and 0 <= y < self.size) and currentTile.get_player() == self.current_player:
                 if len(temp) > 0:
                     for t in temp:
                         flipped.append(t)
@@ -54,7 +53,8 @@ class logic():
                 continue
 
         if (len(flipped) != 0):
-            self.myBoard.update_board(flipped, move.get_player())
+            self.myBoard.update_board(flipped, self.current_player)
+            self.switch_players()
             return True
         else:
             return False 
@@ -80,11 +80,11 @@ class logic():
             currentTile = self.myBoard.get_tile(x, y)
             temp = []
 
-            while (0 <= x < self.size and 0 <= y < self.size) and currentTile.get_player() != move.get_player():
+            while (0 <= x < self.size and 0 <= y < self.size) and currentTile.get_player() != self.current_player:
                 temp.append(currentTile)
                 currentTile = self.board(currentTile.getX + tile[0], currentTile.getY + tile[1])
 
-            if (0 <= x < self.size and 0 <= y < self.size) and currentTile.get_player() == move.get_player():
+            if (0 <= x < self.size and 0 <= y < self.size) and currentTile.get_player() == self.current_player:
                 for t in temp:
                     flipped.append(t)
                 continue
@@ -93,7 +93,7 @@ class logic():
         return flipped, checked
 
 
-    def find_valid_moves(self, player, updateBoardFlag):
+    def find_valid_moves(self, updateBoardFlag):
         # updates myBoard with valid move tiles 
         # returns false if no valid moves are found
         valid_moves = 0
@@ -107,7 +107,7 @@ class logic():
                 if (state == 1 or state == 2):
                     continue
                 else:
-                    tempMove = move(tile.getX, tile.getY, player)
+                    tempMove = move(tile.getX, tile.getY)
                     if (len(self.validate_move(tempMove)[0]) == 0):
                         continue
                     else:

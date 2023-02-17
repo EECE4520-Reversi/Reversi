@@ -9,12 +9,12 @@ class game():
         self.running = True
         self.winner = 0
 
-    def take_turn(self, x, y, p):
+    def take_turn(self, x, y):
         # returns true if turn ends
         # return false if game ends
 
         # update board to show valid moves for player p
-        if(not self.myLogic.find_valid_moves(p, True)):
+        if(not self.myLogic.find_valid_moves(True)):
             #skips turn if no valid moves are found
             return True
         
@@ -24,7 +24,7 @@ class game():
         score = self.get_score()
 
         # pass move to logic for calculating and updating
-        nextMove = move(x, y, p)
+        nextMove = move(x, y)
         self.make_move(nextMove)
 
         # check if game is over
