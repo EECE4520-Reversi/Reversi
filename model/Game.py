@@ -35,10 +35,7 @@ class game():
         
         # end turn
         return True
-
-
         
-
     def game_over(self):
         # makes call to logic game_over
         if (self.myLogic.game_over()):
@@ -51,6 +48,7 @@ class game():
         return self.myLogic.calculate_move(move)
     
     def get_board_data(self):
+        # Returns flat array of size*size length containing tile states
         return self.myLogic.myBoard.get_board()
     
     def get_score(self):
@@ -68,5 +66,3 @@ class game():
             return 2
         else:
             return 0
-        
-    
