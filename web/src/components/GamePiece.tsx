@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { makeMove } from "../services/backendservice";
 
 
-export const GamePiece = ({state}: {
-    state: number
+export const GamePiece = ({state, idx}: {
+    state: number,
+    idx: number
 }) => {
     
     const colors = ["bg-black", "bg-white"];
@@ -13,6 +15,7 @@ export const GamePiece = ({state}: {
     const onClick = () => {
         setColorIndex((colorIndex + 1) % colors.length);
         setAngle(angle == 0 ? 180 : 0);
+        makeMove(idx)
     }
 
     useEffect(() => {

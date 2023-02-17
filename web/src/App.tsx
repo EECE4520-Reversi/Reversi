@@ -19,9 +19,9 @@ function App() {
 
   return (
     <div className="container">
-      <p className="text-8xl text-white-200 font-bold mb-5">
-        Reversi
-        </p>
+        <h1 className="text-8xl text-white-200 font-bold mb-5">
+          Reversi
+        </h1>
 
         <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" 
           onClick={() => setWidth(width - 1)}>Decrease Width</button>
@@ -36,7 +36,7 @@ function App() {
         <div className="min-h-screen flex items-center justify-center">
         <div className={`grid grid-cols-${width} grid-rows-${height} gap-1`}>
           {
-            board.map((e, i) => <GamePiece key={i} state={e}/>)
+            board.map((e, i) => <GamePiece key={i} idx={i} state={e}/>)
           }
         </div>
       </div>

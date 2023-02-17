@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import Server, Config
 import asyncio
 import random
+from fastapi import Request
 
 app = FastAPI()
 
@@ -22,6 +23,14 @@ config = Config(
 
 @app.get("/board/{board_id}")
 async def board(board_id: str):
+    return [random.randint(0, 2) for _ in range(12 * 12)]
+
+@app.post("/board/{board_id}")
+async def board(request: Request, board_id: str):
+    data = await request.json()
+    idx = data["idx"]
+    x, y = idx % 12, idx // 12
+    print(f"Clicked ({x}, {y})")
     return [random.randint(0, 2) for _ in range(12 * 12)]
 
 

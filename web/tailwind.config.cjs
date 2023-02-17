@@ -8,8 +8,8 @@ module.exports = {
   ],
   safelist: [
     {
-        pattern: /grid-cols-./,
-    }
+      pattern: /grid-(cols|rows)-./,
+    },
   ],
   theme: {
     extend: {
