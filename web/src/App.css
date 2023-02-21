@@ -14,3 +14,21 @@
   transform: rotateX(0deg);
   transition: all 1s ease-out;
 }
+
+.pickable-inner:not(:hover) {
+  @apply border-amber-100 border-2;
+}
+
+.pickable:hover {
+  transform: scale(1.2);
+  transition: all .3s ease-in-out;
+  cursor: pointer;
+}
+
+.pickable:not(:hover) {
+  @apply animate-pulse;
+}
+
+.picked {
+  transition: all .5s ease-in-out;
+}

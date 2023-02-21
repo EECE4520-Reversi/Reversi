@@ -14,3 +14,8 @@ export const makeMove = async (idx: number) => {
     });
     return resp.data;
 }
+
+export const resetBoard = async () => {
+    const resp = await axios.delete(`${API_BASE}/board/example`);
+    return resp.data;
+}
