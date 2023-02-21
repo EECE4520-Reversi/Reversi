@@ -3,13 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import Server, Config
 import asyncio
 import random
-from model import Game
-from controller import Controller
+from model.Game import Game
+from controller.Controller import GameController
 from fastapi import Request
 
 app = FastAPI()
 game = Game()
-controller = Controller(game)
+controller = GameController(game)
 
 app.add_middleware(
     CORSMiddleware,
