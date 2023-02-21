@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { makeMove } from "../services/backendservice";
 
 
-export const GamePiece = ({state, idx, gameState, updateBoard}: {
+export const GamePiece = ({state, idx, gameState, boardId, updateBoard}: {
     state: number,
     idx: number,
     gameState: number,
+    boardId: string,
     updateBoard: () => void
 }) => {
 
@@ -25,7 +26,7 @@ export const GamePiece = ({state, idx, gameState, updateBoard}: {
         console.log(idx);
 
         if (state !== 3) return;
-        makeMove(idx);
+        makeMove(idx, boardId);
         updateBoard();
     }
 
