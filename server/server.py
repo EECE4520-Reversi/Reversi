@@ -25,6 +25,10 @@ config = Config(
 async def board(board_id: str):
     return [random.randint(0, 2) for _ in range(12 * 12)]
 
+def get_board(self, board_id: str):
+    return self.games[board_id].flatten()
+
+
 @app.post("/board/{board_id}")
 async def board(request: Request, board_id: str):
     data = await request.json()
