@@ -30,7 +30,7 @@ class Logic:
         flipped.append(Tile(3, move.get_col(), move.get_row()))
 
         # continue where validate_move() left off
-        for i in range(checked, 7):
+        for i in range(checked, 8):
             tile = border[i]
             x = move.get_col() + tile[0]
             y = move.get_row() + tile[1]
@@ -39,7 +39,7 @@ class Logic:
             checked += 1
 
             while (
-                0 <= x < self.size and 0 <= y <= self.size
+                0 <= x < self.size and 0 <= y < self.size
             ) and currentTile.get_player() != self.current_player:
                 temp.append(currentTile)
                 currentTile = self.board.get_tile(
@@ -71,7 +71,7 @@ class Logic:
         flipped = []
 
         # check each border tile for opposite state
-        for i in range(7):
+        for i in range(8):
             checked += 1
             tile = border[i]
             x = move.get_col() + tile[0]
