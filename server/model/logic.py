@@ -39,7 +39,7 @@ class Logic:
             checked += 1
 
             while (
-                0 <= x < self.size and 0 <= y <= self.size
+                0 <= x < self.size and 0 <= y < self.size
             ) and currentTile.get_player() != self.current_player:
                 temp.append(currentTile)
                 currentTile = self.board.get_tile(
