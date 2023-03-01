@@ -22,8 +22,8 @@ class Board:
 
     def initialize_board(self):
         # create all tile objects with correct positions
-        for a in range(self.size - 1):
-            for b in range(self.size - 1):
+        for a in range(self.size):
+            for b in range(self.size):
                 self.matrix[a][b].set_posx(b)
                 self.matrix[a][b].set_posy(a)
 
