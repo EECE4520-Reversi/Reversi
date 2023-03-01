@@ -29,9 +29,12 @@ function App() {
   }
 
   useEffect(() => {
-    updateBoard()
-  }, [boardId])
-
+    const interval = setInterval(() => {
+    updateBoard();
+    }, 1000);
+  
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="container">
