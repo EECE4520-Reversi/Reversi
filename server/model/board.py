@@ -31,10 +31,10 @@ class Board:
         midLow = self.size // 2 - 1  # default 3
         midHigh = self.size // 2  # default 4
 
-        self.matrix[midLow][midLow].set_player(1)
-        self.matrix[midLow][midHigh].set_player(2)
-        self.matrix[midHigh][midLow].set_player(2)
-        self.matrix[midHigh][midHigh].set_player(1)
+        self.matrix[midLow][midLow].set_player(2)
+        self.matrix[midLow][midHigh].set_player(1)
+        self.matrix[midHigh][midLow].set_player(1)
+        self.matrix[midHigh][midHigh].set_player(2)
 
     def get_score(self):
         black_score = 0
