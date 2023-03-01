@@ -215,7 +215,7 @@ class Logic:
         else:
             return False
 
-    def get_board(self):
+    def get_board(self) -> list[int]:
         """Getter for current board state as a 1D array of tile states
 
         Returns:
