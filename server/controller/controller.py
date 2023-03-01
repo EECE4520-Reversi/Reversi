@@ -43,5 +43,5 @@ class GameController:
             "board": self.get_board(board_id),
             "score": self.get_score(board_id),
             "state": self.get_state(board_id),
-            "winner": self.get_winner(board_id)
+            "winner": self.get_winner(board_id),
         }

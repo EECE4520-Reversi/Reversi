@@ -66,46 +66,6 @@ class Logic:
         tiles_to_flip = self.validate_move(move)
         # If no flip tiles found, move was invalid
         if len(tiles_to_flip) == 0:
-<<<<<<< HEAD
-=======
-            return flipped
-
-        flipped += tiles_to_flip
-        flipped.append(Tile(3, move.get_col(), move.get_row()))
-
-        # continue where validate_move() left off
-        for i in range(checked, 8):
-            tile = border[i]
-            x = move.get_col() + tile[0]
-            y = move.get_row() + tile[1]
-            currentTile = self.board.get_tile(x, y)
-            temp = []
-            checked += 1
-
-            while (
-                0 <= x < self.size and 0 <= y < self.size
-            ) and currentTile.get_player() != self.current_player:
-                temp.append(currentTile)
-                currentTile = self.board.get_tile(
-                    currentTile.getX() + tile[0], currentTile.getY() + tile[1]
-                )
-
-            # if path is valid, save flippable tiles
-            if (
-                0 <= x < self.size and 0 <= y < self.size
-            ) and currentTile.get_player() == self.current_player:
-                if len(temp) > 0:
-                    for t in temp:
-                        flipped.append(t)
-            else:
-                continue
-
-        if len(flipped) != 0:
-            self.board.update_board(flipped, self.current_player)
-            self.switch_players()
-            return True
-        else:
->>>>>>> main
             return False
 
         # If any flip tiles found, continue
@@ -143,14 +103,8 @@ class Logic:
         border = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]
         flipped = []
 
-<<<<<<< HEAD
         # Check each border tile
         for i in range(8):
-=======
-        # check each border tile for opposite state
-        for i in range(8):
-            checked += 1
->>>>>>> main
             tile = border[i]
 
             # Get the position of border tile with relative offset
