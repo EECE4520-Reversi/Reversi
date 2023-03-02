@@ -35,7 +35,7 @@ class Logic:
         Returns current state of game board
     """
 
-    def __init__(self, size: int = 8, player: int = 1) -> None:
+    def __init__(self, size: int = 8, player: int = 2) -> None:
         """Constructs all necessary attributes for a single game
 
         Args:
@@ -47,7 +47,7 @@ class Logic:
         self.current_player = player
         self.find_valid_moves(True)
 
-    def switch_players(self):
+    def switch_players(self) -> None:
         """Switches which player is the current player"""
         self.current_player = 3 - self.current_player
 
@@ -205,15 +205,38 @@ class Logic:
             bool: True if the game is over, False otherwise
         """
 
-        return False
-        # TODO: Fix
+        # Load current board state
+        tiles = self.board.get_board(True)
 
-        # Run find_valid_moves for both players
-        # If neither player can make a valid move, the game is over
-        if not self.find_valid_moves(1, False) and not self.find_valid_moves(2, False):
+        # Check if current player still has valid moves
+        for tile in tiles:
+            if tile == 3:
+                return False
+
+        # If current player cannot move, switch players
+        self.switch_players()
+
+        # If other player cannot move, game is over
+        if not self.find_valid_moves(True):
             return True
-        else:
+
+        # If other player can move, game is over
+        return False
+
+        # If current player has valid moves, game is not over
+        print(self.current_player)
+        if self.find_valid_moves(False):
             return False
+        # If current player does not, check other player
+        else:
+            self.switch_players()
+            # If other player has valid moves, game is not over
+            if self.find_valid_moves(False):
+                # If triggered, the current player will be skipped
+                return False
+            # If neither player does, game is over
+            else:
+                return True
 
     def get_board(self) -> list[int]:
         """Getter for current board state as a 1D array of tile states

@@ -42,6 +42,7 @@ class Game:
         self.logic = Logic(size)
         self.running = True
         self.winner = 0
+        self.size = size
 
     def take_turn(self, x: int, y: int) -> bool:
         """Calls necessary logic to interpret a player's move
