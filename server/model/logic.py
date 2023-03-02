@@ -223,21 +223,6 @@ class Logic:
         # If other player can move, game is over
         return False
 
-        # If current player has valid moves, game is not over
-        print(self.current_player)
-        if self.find_valid_moves(False):
-            return False
-        # If current player does not, check other player
-        else:
-            self.switch_players()
-            # If other player has valid moves, game is not over
-            if self.find_valid_moves(False):
-                # If triggered, the current player will be skipped
-                return False
-            # If neither player does, game is over
-            else:
-                return True
-
     def get_board(self) -> list[int]:
         """Getter for current board state as a 1D array of tile states
 
