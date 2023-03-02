@@ -73,17 +73,19 @@ class Board:
         # Assign all tiles correct position data
         for a in range(self.size):
             for b in range(self.size):
+                # Swap axis to convert matrix positions to euclidean plane positions
                 self.matrix[a][b].set_posx(b)
                 self.matrix[a][b].set_posy(a)
+                self.matrix[a][b].set_player(0)
 
         # fill middle 4 tiles with starting configuration
         midLow = self.size // 2 - 1
         midHigh = self.size // 2
 
-        self.matrix[midLow][midLow].set_player(2)
-        self.matrix[midLow][midHigh].set_player(1)
-        self.matrix[midHigh][midLow].set_player(1)
-        self.matrix[midHigh][midHigh].set_player(2)
+        self.matrix[midLow][midLow].set_player(1)
+        self.matrix[midLow][midHigh].set_player(2)
+        self.matrix[midHigh][midLow].set_player(2)
+        self.matrix[midHigh][midHigh].set_player(1)
 
         # No return data
         return
@@ -103,13 +105,14 @@ class Board:
         for row in self.matrix:
             for tile in row:
                 # If black tile, increment black score, else increment white
-                if tile.get_player == 1:
+                if tile.get_player() == 1:
                     white_score += 1
-                elif tile.get_player == 2:
+                elif tile.get_player() == 2:
                     black_score += 1
 
         # Pack two scores into list for return
         self.tileScore = [white_score, black_score]
+        print("From board.py: ", self.tileScore)
         return self.tileScore
 
     def update_board(self, flip_list: List[Tile], player: int) -> None:
