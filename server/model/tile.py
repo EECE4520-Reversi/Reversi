@@ -11,6 +11,8 @@ class Tile:
             y position of the tile
         player: int
             player state of the tile
+        minimax_score: int
+            minimax score of the tile
 
     Methods
     ----------
