@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "server": "cd server & python server.py",
+    "web": "cd web & npm run dev",
+    "start": "concurrently \"npm run server\" \"npm run web\""
+  },
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "name": "reversi",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
