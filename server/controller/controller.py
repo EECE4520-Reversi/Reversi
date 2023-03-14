@@ -1,5 +1,6 @@
 from collections import defaultdict
 from model.game import Game
+import time
 
 
 class GameController:
@@ -38,6 +39,13 @@ class GameController:
             y (int): y position of move
         """
         self.games[board_id].take_turn(x, y)
+        
+        #if the board is a player vs AI board
+        if self.games[board_id].gameType == 2:
+            self.games[board_id].take_ai_turn()
+
+    def change_difficulty(self, board_id: str, difficulty: int) -> None:
+        self.games[board_id].difficulty = difficulty
 
     def get_board(self, board_id: str) -> list[int]:
         """Gets list of tile states from target game board

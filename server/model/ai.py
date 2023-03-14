@@ -1,6 +1,6 @@
-from move import Move
-from board import Board
-from game import Game
+from model.move import Move
+from model.board import Board
+from model.game import Game
 
 class AI:
     """A class to represent AI agents to play against the user
@@ -20,30 +20,18 @@ class AI:
 
     Methods
     -------
-    minimax_decision(board):
-        Given a board, finds the best move for the AI to make
+    minimax_decision(board, search depth):
+        Given a board and search depth, finds the best move for the AI to make using minimax
     minimax(board, board state, current depth):
         Given a board, the state, and the current depth of the search, finds best minimax value
     heuristic(board):
         Given a board, finds the heuristic value of the board
     """
 
-    def __init__(self, difficulty: int=1,) -> None:
-        """Constructs all necessary attributes for an AI player
-        
-        Args:
-            difficulty (int, optional): the difficulty level. Defaults to 1 (medium)"""
-        
-        self.difficulty = difficulty
+    def __init__(self) -> None:
+        """Constructs all necessary attributes for an AI player"""
 
-        if difficulty == 0:
-            self.search_depth = 1
-        elif difficulty == 1:
-            self.search_depth = 2
-        elif difficulty == 2:
-            self.search_depth = 3
-
-    def minimax_decision(self, board: Board) -> Move:
+    def minimax_decision(self, board: Board, search_depth: int = 1) -> Move:
         """"Given a board, returns the move that is best to take for the AI"""
         for row in board.matrix:
             for tile in row:
@@ -55,7 +43,7 @@ class AI:
 
                     #take the next turn with the current valid tile
                     temp_game.take_turn(tile.getX(), tile.getY())
-                    tile.minimax_score = self.minimax(board, 1, 1)
+                    tile.minimax_score = self.minimax(board, 1, 1, search_depth)
 
         min_score = 9999
         for row in board.matrix:
@@ -68,10 +56,10 @@ class AI:
         return move
 
 
-    def minimax(self, board: Board, board_state: int, current_depth: int) -> int:
+    def minimax(self, board: Board, board_state: int, current_depth: int, search_depth: int) -> int:
         """Given a board, board state, the current depth of the algorithm
            Returns the best minimax score of the valid moves """
-        if board_state is not 3 and current_depth is not self.search_depth:
+        if board_state != 3 and current_depth != search_depth:
             #for each valid move, calculate its minimax value
             minimax_values = []
             for row in board.matrix:
@@ -104,7 +92,7 @@ class AI:
                 current_player = 'Player'
 
             #take the min minimax value if it is AI turn or max value if it is the player
-            if current_player is 'AI':
+            if current_player == 'AI':
                 return min(minimax_values)
             else:
                 return max(minimax_values)

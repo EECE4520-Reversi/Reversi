@@ -35,7 +35,7 @@ class Logic:
         Returns current state of game board
     """
 
-    def __init__(self, size: int = 8, player: int = 2) -> None:
+    def __init__(self, size: int = 8, player: int = 1) -> None:
         """Constructs all necessary attributes for a single game
 
         Args:
