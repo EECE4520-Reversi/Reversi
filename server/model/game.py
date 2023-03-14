@@ -16,7 +16,6 @@ class Game:
     winner : int
         the winner determined at the end of the game
 
-
     Methods
     -------
     take_turn():
