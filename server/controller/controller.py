@@ -40,7 +40,7 @@ class GameController:
         """
         self.games[board_id].take_turn(x, y)
         
-        #if the board is a player vs AI board
+        #if the game is a player vs AI game
         if self.games[board_id].gameType == 2:
             self.games[board_id].take_ai_turn()
 

@@ -1,3 +1,4 @@
+import copy
 from model.logic import Logic
 from model.move import Move
 from model.board import Board
@@ -32,7 +33,7 @@ class Game:
         Returns winner of game and saves final game data
     """
 
-    def __init__(self, size: int = 8, difficulty: int = 1, gameType: int = 2) -> None:
+    def __init__(self, size: int = 8, search_depth: int = 1, gameType: int = 2) -> None:
         """Initialize logic, board, and players
 
         Args:
@@ -43,7 +44,7 @@ class Game:
         self.running = True
         self.winner = 0
         self.size = size
-        self.difficulty = difficulty
+        self.difficulty = search_depth
         #gameType = 1: Local Game
         #gameType = 2: AI Game
         #gameType = 3: Online Game
@@ -77,12 +78,7 @@ class Game:
         return True
     
     def take_ai_turn(self) -> bool:
-        """Calls necessary logic to interpret a player's move
-
-        Args:
-            x (int): x-position of given move
-            y (int): y-position of given move
-
+        """Calls necessary logic to interpret an AI's move
         Returns:
             bool: True if move was successful. False on error.
         """
@@ -164,20 +160,22 @@ class Game:
         else:
             return 0
     
-    def minimax_decision(self, board: Board, search_depth: int = 1) -> Move:
-        """"Given a board, returns the move that is best to take for the AI"""
+    def minimax_decision(self, board: Board, search_depth: int = 3) -> Move:
+        """"Given a board, assuming it is player 2's turn,
+            returns the move that is best to take for player 2"""
         for row in board.matrix:
             for tile in row:
                 if tile.get_player() == 3:
                     #create a temporary game to calculate moves made on this tile
                     temp_game = Game(board.size)
                     temp_game.logic.current_player = 2
-                    temp_game.logic.board = board
+                    temp_game.logic.board = copy.deepcopy(board)
 
                     #take the next turn with the current valid tile
                     temp_game.take_turn(tile.getX(), tile.getY())
                     tile.minimax_score = self.minimax(board, 1, 1, search_depth)
 
+        #sift through board, find minimum score and return the move
         min_score = 9999
         for row in board.matrix:
             for tile in row:
@@ -201,7 +199,7 @@ class Game:
                         #create a temporary game to calculate moves made on this tile
                         temp_game = Game(board.size)
                         temp_game.logic.current_player = board_state
-                        temp_game.logic.board = board
+                        temp_game.logic.board = copy.deepcopy(board)
 
                         #take the next turn with the current valid tile
                         temp_game.take_turn(tile.getX(), tile.getY())
