@@ -34,7 +34,9 @@ class Game:
         Returns winner of game and saves final game data
     """
 
-    def __init__(self, size: int = 8, search_depth: int = 1, game_type: int = 2) -> None:
+    def __init__(
+        self, size: int = 8, search_depth: int = 1, game_type: int = 2
+    ) -> None:
         """Initialize logic, board, and players
 
         Args:
@@ -219,7 +221,10 @@ class Game:
                         # call minimax
                         minimax_values.append(
                             self.minimax(
-                                temp_game.logic.board, next_state, current_depth + 1, search_depth
+                                temp_game.logic.board,
+                                next_state,
+                                current_depth + 1,
+                                search_depth,
                             )
                         )
 

@@ -38,7 +38,9 @@ class GameController:
         """
         board_id = str(len(self.games.keys()))
         self.games[board_id] = Game(size=size, search_depth=difficult)
-        print(f"Created New Game (id: {board_id}, size: {size}, difficulty: {difficult})")
+        print(
+            f"Created New Game (id: {board_id}, size: {size}, difficulty: {difficult})"
+        )
         return self.get_data(board_id)
 
     # checks if the given game exists
@@ -142,5 +144,5 @@ class GameController:
             "score": self.get_score(board_id),
             "state": self.get_state(board_id),
             "winner": self.get_winner(board_id),
-            "size": self.games[board_id].size
+            "size": self.games[board_id].size,
         }
