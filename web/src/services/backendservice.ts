@@ -8,14 +8,20 @@ export const fetchBoard = async (boardId: string) => {
 }
 
 export const makeMove = async (idx: number, boardId: string) => {
-    console.log(idx)
     const resp = await axios.post(`${API_BASE}/board/${boardId}`, {
-        idx: idx
+        idx
     });
     return resp.data;
 }
 
 export const resetBoard = async (boardId: string) => {
     const resp = await axios.delete(`${API_BASE}/board/${boardId}`);
+    return resp.data;
+}
+
+export const createGame = async (size: number, difficulty: string) => {
+    const resp = await axios.post(`${API_BASE}/create`, {
+        size, difficulty
+    });
     return resp.data;
 }

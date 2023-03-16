@@ -1,9 +1,40 @@
+import { useEffect, useState } from 'react'
 import './App.css'
 import Board from './components/Board'
-import Modal from './components/Modal'
-import NewGameModal from './components/NewGame'
+import NewGame from './components/NewGame'
+import { createGame, fetchBoard } from './services/backendservice';
+import { useSearchParams } from "react-router-dom";
 
 function App() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [boardId, setBoardId] = useState<string>(new URLSearchParams(searchParams).get("id") || "")
+  const [gameData, setGameData] = useState<{id: string, board: number[], state: number, winner: number, size: number}>({});
+
+  useEffect(() => {
+    fetchBoard(boardId)
+      .then(gameData => {
+        setGameData(gameData)
+      })
+      .catch(() => {
+        createGame(8, "Medium").then(gameData => {
+          console.log(gameData);
+          setBoardId(gameData.id);
+          setGameData(gameData);
+      })
+      });
+  }, [])
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    params.append("id", boardId)
+    setSearchParams(params)
+  }, [boardId])
+
+  useEffect(() => {
+    if (gameData.id !== undefined)
+      setBoardId(gameData.id);
+  }, [gameData])
+  
 
   return (
     <div className="container">
@@ -11,8 +42,8 @@ function App() {
           Reversi
         </h1>
 
-        <NewGameModal />
-        <Board />
+        <NewGame setGameData={setGameData}/>
+        <Board gameData={gameData}/>
 
     </div>
   )

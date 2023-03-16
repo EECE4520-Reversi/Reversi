@@ -1,6 +1,6 @@
-from collections import defaultdict
+from typing import List, Dict
+
 from model.game import Game
-import time
 
 
 class GameController:
@@ -27,9 +27,25 @@ class GameController:
     """
 
     def __init__(self) -> None:
-        """Initialize dictionary of game objects"""
-        self.games = defaultdict(lambda: Game())
+        self.games: Dict[str, Game] = {}
 
+    def new_game(self, size: int, difficult: int):
+        """Creates a new game using the given settings
+
+        Args:
+            size (int): Size of the board
+            difficult (int): Match difficulty
+        """
+        board_id = str(len(self.games.keys()))
+        self.games[board_id] = Game(size=size, search_depth=difficult)
+        print(f"Created New Game (id: {board_id}, size: {size}, difficulty: {difficult})")
+        return self.get_data(board_id)
+
+    # checks if the given game exists
+    def game_exists(self, board_id: str):
+        return board_id in self.games
+
+    # sends a Move to the board
     def send_move(self, board_id: str, x: int, y: int) -> None:
         """Sends move to Game with board_id
 
@@ -39,9 +55,9 @@ class GameController:
             y (int): y position of move
         """
         self.games[board_id].take_turn(x, y)
-        
-        #if the game is a player vs AI game
-        if self.games[board_id].gameType == 2:
+
+        # if the game is a player vs AI game
+        if self.games[board_id].game_type == 2:
             self.games[board_id].take_ai_turn()
 
     def change_difficulty(self, board_id: str, difficulty: int) -> None:
@@ -91,7 +107,7 @@ class GameController:
         return self.games[board_id].end_game()
 
     # returns an array of the game score in the form of [whiteScore, blackScore]
-    def get_score(self, board_id: str) -> list[int]:
+    def get_score(self, board_id: str) -> List[int]:
         """Returns the current score of the target game
 
         Args:
@@ -121,8 +137,10 @@ class GameController:
             dict: key:value holding all critical game information
         """
         return {
+            "id": board_id,
             "board": self.get_board(board_id),
             "score": self.get_score(board_id),
             "state": self.get_state(board_id),
             "winner": self.get_winner(board_id),
+            "size": self.games[board_id].size
         }

@@ -31,7 +31,6 @@ export const GamePiece = ({state, idx, gameState, boardId, updateBoard}: {
     }
 
     useEffect(() => {
-        console.log(`Re-render ${idx}`);
         setLastColorState(colorState);
         setColorState(state);
         setAngle(angle == 0 ? 180 : 0);
