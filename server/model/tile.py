@@ -92,5 +92,3 @@ class Tile:
             player_num (int): State to assign this tile
         """
         self.player = player_num
-
-
