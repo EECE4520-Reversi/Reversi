@@ -214,7 +214,7 @@ class Game:
                             next_state = temp_game.logic.current_player
 
                         #call minimax 
-                        minimax_values.append(self.minimax(temp_game.logic.board, next_state, current_depth + 1))
+                        minimax_values.append(self.minimax(temp_game.logic.board, next_state, current_depth + 1, search_depth))
            
            #find the current player based on search depth
             if current_depth % 2 == 0:
