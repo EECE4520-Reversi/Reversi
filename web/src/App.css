@@ -21,7 +21,7 @@
 
 .pickable:hover {
   transform: scale(1.2);
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
   cursor: pointer;
 }
 
@@ -30,5 +30,12 @@
 }
 
 .picked {
-  transition: all .5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+/* Remove number input arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
