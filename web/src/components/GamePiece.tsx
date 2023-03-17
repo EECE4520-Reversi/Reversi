@@ -1,5 +1,7 @@
+import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { makeMove } from "../services/backendservice";
+import { GameData } from "../types/GameData";
 
 export const GamePiece = ({
   state,
@@ -12,7 +14,7 @@ export const GamePiece = ({
   idx: number;
   gameState: number;
   boardId: string;
-  updateBoard: () => void;
+  updateBoard: (data: GameData) => void;
 }) => {
   /*
     #   0 if empty
@@ -26,12 +28,16 @@ export const GamePiece = ({
   const [lastColorState, setLastColorState] = useState<number | undefined>();
   const [angle, setAngle] = useState<number>(0);
 
-  const onClick = () => {
-    console.log(idx);
+  const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
+  const onClick = async () => {
     if (state !== 3) return;
-    makeMove(idx, boardId);
-    updateBoard();
+
+    const data = await makeMove(idx, boardId)
+    updateBoard(data[0])
+    await delay(1000);
+    updateBoard(data[1])
+    
   };
 
   useEffect(() => {

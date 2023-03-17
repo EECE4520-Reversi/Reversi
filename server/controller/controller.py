@@ -1,5 +1,6 @@
-from typing import List, Dict
+from typing import Dict, List
 
+from dao.gamedao import GameDao
 from model.game import Game
 
 
@@ -28,27 +29,47 @@ class GameController:
 
     def __init__(self) -> None:
         self.games: Dict[str, Game] = {}
+        for db_game in GameDao().fetch_games():
+            game = Game.from_dict(db_game)
+            self.games[game.board_id] = game
 
-    def new_game(self, size: int, difficult: int):
+    def new_game(self, size: int, difficult: int, game_type: int):
         """Creates a new game using the given settings
 
         Args:
             size (int): Size of the board
             difficult (int): Match difficulty
+            game_type (int): Game type
         """
         board_id = str(len(self.games.keys()))
-        self.games[board_id] = Game(size=size, search_depth=difficult)
-        print(
-            f"Created New Game (id: {board_id}, size: {size}, difficulty: {difficult})"
+        self.games[board_id] = Game(
+            board_id=board_id, size=size, search_depth=difficult, game_type=game_type
         )
+        GameDao().save_game(self.games[board_id])
         return self.get_data(board_id)
 
     # checks if the given game exists
     def game_exists(self, board_id: str):
         return board_id in self.games
 
+    def players_turn(self, board_id):
+        """Verify its player one's turn
+
+        Returns:
+            bool: If its player one's turn
+        """
+        return self.games[board_id].current_turn == 1
+
+    def is_move_valid(self, board_id: str, x: int, y: int):
+        game = self.games[board_id]
+        return game.logic.board.get_tile(x, y).player == 3
+
+    def convert_index_to_xy(self, board_id, idx):
+        game = self.games[board_id]
+        return idx % game.size, idx // game.size
+
     # sends a Move to the board
-    def send_move(self, board_id: str, x: int, y: int) -> None:
+    def send_move(self, board_id: str, x: int, y: int) -> List[dict]:
         """Sends move to Game with board_id
 
         Args:
@@ -56,14 +77,23 @@ class GameController:
             x (int): x position of move
             y (int): y position of move
         """
-        self.games[board_id].take_turn(x, y)
+        game = self.games[board_id]
+        game.take_turn(x, y)
+
+        # Array of game data. There is a slight delay in between showing each state on the front end
+        datas = [self.get_data(board_id)]
 
         # if the game is a player vs AI game
-        if self.games[board_id].game_type == 2:
-            self.games[board_id].take_ai_turn()
+        if game.game_type == 2:
+            game.take_ai_turn()
+            datas.append(self.get_data(board_id))
+
+        GameDao().save_game(game)
+        return datas
 
     def change_difficulty(self, board_id: str, difficulty: int) -> None:
         self.games[board_id].difficulty = difficulty
+        GameDao().save_game(self.games[board_id])
 
     def get_board(self, board_id: str) -> list[int]:
         """Gets list of tile states from target game board
@@ -88,11 +118,11 @@ class GameController:
                 2: Player 2's turn (white)
                 3: Game over
         """
-        print("Getting game state")
+        # print("Getting game state")
         if self.games[board_id].logic.game_over():
             return 3
         else:
-            return self.games[board_id].logic.current_player
+            return self.games[board_id].current_turn
 
     def get_winner(self, board_id: str) -> int:
         """Returns the winner of the target game
@@ -118,7 +148,7 @@ class GameController:
         Returns:
             list[int]: [whitescore, blackscore]
         """
-        print(self.games[board_id].get_score())
+        # print(self.games[board_id].get_score())
         return self.games[board_id].get_score()
 
     def reset_game(self, board_id: str) -> None:
@@ -127,7 +157,8 @@ class GameController:
         Args:
             board_id (str): id of target game
         """
-        self.games[board_id] = Game(self.games[board_id].size)
+        self.games[board_id].reset()
+        GameDao().save_game(self.games[board_id])
 
     def get_data(self, board_id: str):
         """Return all getter results in dictionary

@@ -19,8 +19,6 @@ class Board:
 
     Methods
     -------
-    get_board(flattened:bool):
-        Returns current state of game board
     initialize_board():
         Fills the board during initialization with default state
     get_score():
@@ -33,38 +31,35 @@ class Board:
         returns Tile object at given position
     """
 
-    def __init__(self, size: int = 8) -> None:
+    def __init__(
+        self,
+        size: int = 8,
+        tile_score: List[int] = None,
+        matrix: List[List[Tile]] = None,
+    ) -> None:
         """Constructs all necessary objects for a single board
 
         Args:
             size (int, optional): Size of the board. Defaults to 8.
         """
-        self.tileScore = [0, 0]
+        self.tile_score = tile_score or [0, 0]
         self.size = size
-        self.matrix = [[Tile() for _ in range(self.size)] for _ in range(self.size)]
-        self.initialize_board()
+        self.matrix = matrix or [
+            [Tile() for _ in range(self.size)] for _ in range(self.size)
+        ]
 
-    def get_board(self, flattened: bool = False):
+    @property
+    def flat_board(self) -> List[int]:
         """Gets the state of each tile on the board
 
-        Args:
-            flattened (bool, optional): Board states returned as a 1D array
-            if True. Defaults to False.
-
         Returns:
-            list[list[Tile]]: matrix of Tiles
-                OR
             list[int]: list of tile states
         """
-        # If flag is False, return the 2D matrix as is
-        if not flattened:
-            return self.matrix
 
-        # If flag is True, grab each tile state and store in a list to return
         flat_board = []
         for row in self.matrix:
             for tile in row:
-                flat_board.append(tile.get_player())
+                flat_board.append(tile.player)
         return flat_board
 
     def initialize_board(self) -> None:
@@ -74,18 +69,18 @@ class Board:
         for a in range(self.size):
             for b in range(self.size):
                 # Swap axis to convert matrix positions to euclidean plane positions
-                self.matrix[a][b].set_posx(b)
-                self.matrix[a][b].set_posy(a)
-                self.matrix[a][b].set_player(0)
+                self.matrix[a][b].x = b
+                self.matrix[a][b].y = a
+                self.matrix[a][b].player = 0
 
         # fill middle 4 tiles with starting configuration
         midLow = self.size // 2 - 1
         midHigh = self.size // 2
 
-        self.matrix[midLow][midLow].set_player(1)
-        self.matrix[midLow][midHigh].set_player(2)
-        self.matrix[midHigh][midLow].set_player(2)
-        self.matrix[midHigh][midHigh].set_player(1)
+        self.matrix[midLow][midLow].player = 1
+        self.matrix[midLow][midHigh].player = 2
+        self.matrix[midHigh][midLow].player = 2
+        self.matrix[midHigh][midHigh].player = 1
 
         # No return data
         return
@@ -105,15 +100,15 @@ class Board:
         for row in self.matrix:
             for tile in row:
                 # If black tile, increment black score, else increment white
-                if tile.get_player() == 1:
+                if tile.player == 1:
                     white_score += 1
-                elif tile.get_player() == 2:
+                elif tile.player == 2:
                     black_score += 1
 
         # Pack two scores into list for return
-        self.tileScore = [white_score, black_score]
-        print("From board.py: ", self.tileScore)
-        return self.tileScore
+        self.tile_score = [white_score, black_score]
+        # print("From board.py: ", self.tile_score)
+        return self.tile_score
 
     def update_board(self, flip_list: List[Tile], player: int) -> None:
         """Updates given tiles with given player state
@@ -124,7 +119,7 @@ class Board:
         """
         # Set player of each tile by using position values
         for tile in flip_list:
-            self.matrix[tile.getY()][tile.getX()].set_player(player)
+            self.matrix[tile.y][tile.x].player = player
 
         # Update score to reflect changes
         self.get_score()
@@ -147,9 +142,9 @@ class Board:
         # 1 = White wins
         # 2 = Black wins
 
-        if self.tileScore[0] > self.tileScore[1]:
+        if self.tile_score[0] > self.tile_score[1]:
             return 1
-        elif self.tileScore[0] < self.tileScore[1]:
+        elif self.tile_score[0] < self.tile_score[1]:
             return 2
         else:
             return 0
@@ -165,3 +160,21 @@ class Board:
             Tile: pointer to tile object at provided position
         """
         return self.matrix[pos_y][pos_x]
+
+    def to_dict(self):
+        return {
+            "size": self.size,
+            "tile_score": self.tile_score,
+            "matrix": [[tile.to_dict() for tile in row] for row in self.matrix],
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            data.get("size"),
+            data.get("tile_score"),
+            [
+                [Tile.from_dict(tile_data) for tile_data in row]
+                for row in data.get("matrix")
+            ],
+        )

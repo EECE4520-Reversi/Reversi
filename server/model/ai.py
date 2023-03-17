@@ -1,6 +1,6 @@
-from model.move import Move
 from model.board import Board
 from model.game import Game
+from model.move import Move
 
 
 class AI:
@@ -36,23 +36,26 @@ class AI:
         """ "Given a board, returns the move that is best to take for the AI"""
         for row in board.matrix:
             for tile in row:
-                if tile.get_player() == 3:
+                if tile.player == 3:
                     # create a temporary game to calculate moves made on this tile
-                    temp_game = Game(board.size)
+                    temp_game = Game(size=board.size)
                     temp_game.logic.current_player = 2
                     temp_game.logic.board = board
 
                     # take the next turn with the current valid tile
-                    temp_game.take_turn(tile.getX(), tile.getY())
-                    tile.minimax_score = self.minimax(board, 1, 1, search_depth)
+                    temp_game.take_turn(tile.x, tile.y)
+                    tile.minimax_score = self.minimax(
+                        temp_game.logic.board, 1, 1, search_depth
+                    )
 
+        move = None
         min_score = 9999
         for row in board.matrix:
             for tile in row:
-                if tile.get_player() == 3:
+                if tile.player == 3:
                     if tile.minimax_score < min_score:
                         min_score = tile.minimax_score
-                        move = Move(tile.getX(), tile.getY())
+                        move = Move(tile.x, tile.y)
 
         return move
 
@@ -66,14 +69,14 @@ class AI:
             minimax_values = []
             for row in board.matrix:
                 for tile in row:
-                    if tile.get_player() == 3:
+                    if tile.player == 3:
                         # create a temporary game to calculate moves made on this tile
-                        temp_game = Game(board.size)
+                        temp_game = Game(size=board.size)
                         temp_game.logic.current_player = board_state
                         temp_game.logic.board = board
 
                         # take the next turn with the current valid tile
-                        temp_game.take_turn(tile.getX(), tile.getY())
+                        temp_game.take_turn(tile.x, tile.y)
 
                         # find the state of the new board after the turn
                         """1: Player 1's turn (black)
@@ -87,7 +90,10 @@ class AI:
                         # call minimax
                         minimax_values.append(
                             self.minimax(
-                                temp_game.logic.board, next_state, current_depth + 1
+                                temp_game.logic.board,
+                                next_state,
+                                current_depth + 1,
+                                search_depth=search_depth,
                             )
                         )
 
@@ -107,10 +113,11 @@ class AI:
         else:
             return self.heuristic(board)
 
-    def heuristic(self, board: Board):
+    @staticmethod
+    def heuristic(board: Board):
         """Given a board, calculate the heuristic score assuming the player is white"""
-        tileScore = board.get_score()
+        tile_score = board.get_score()
         # white score - black score
-        heuristic_result = tileScore[0] - tileScore[1]
+        heuristic_result = tile_score[0] - tile_score[1]
 
         return heuristic_result
