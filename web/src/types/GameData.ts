@@ -4,4 +4,5 @@ export type GameData = {
   state: number;
   winner: number;
   size: number;
-} | undefined;
+  score: number[]
+};

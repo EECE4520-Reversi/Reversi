@@ -19,7 +19,7 @@ function App() {
         setGameData(gameData);
       })
       .catch(() => {
-        createGame(8, "Medium").then((gameData) => {
+        createGame(8, 1, 2).then((gameData) => {
           console.log(gameData);
           setBoardId(gameData.id);
           setGameData(gameData);
@@ -44,7 +44,7 @@ function App() {
       {gameData && (
         <>
           <NewGame setGameData={setGameData} />
-          <Board gameData={gameData} />
+          <Board setGameData={setGameData} gameData={gameData} />
         </>
       )}
     </div>

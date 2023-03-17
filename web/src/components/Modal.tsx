@@ -1,18 +1,23 @@
 import { ReactElement } from "react";
 
 export default function Modal({
-  onClose,
+  visible,
+  setVisibility,
   onSubmit,
   title,
   component,
   submitText,
 }: {
-  onSubmit: () => void;
-  onClose: () => void;
+  onSubmit?: () => void;
+  setVisibility: (visiblitity: boolean) => void;
   title: string;
   submitText: string;
-  component: ReactElement;
+  component?: ReactElement;
+  visible: boolean;
 }) {
+
+  if (!visible) return <></>;
+
   return (
     <>
       <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
@@ -28,17 +33,23 @@ export default function Modal({
               <button
                 className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
-                onClick={onClose}
+                onClick={() => setVisibility(false)}
               >
                 Close
               </button>
+
+              {onSubmit && 
               <button
                 className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
-                onClick={onSubmit}
+                onClick={() => {
+                  setVisibility(false);
+                  onSubmit();
+                }}
               >
                 {submitText}
-              </button>
+              </button> 
+              }
             </div>
           </div>
         </div>

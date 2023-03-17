@@ -25,7 +25,8 @@ class Move:
         """
         self.data = (posx, posy)
 
-    def get_col(self) -> int:
+    @property
+    def col(self) -> int:
         """Gets x position of this move
 
         Returns:
@@ -33,10 +34,14 @@ class Move:
         """
         return self.data[0]
 
-    def get_row(self) -> int:
+    @property
+    def row(self) -> int:
         """Gets y position of this move
 
         Returns:
             int: y position of this move
         """
         return self.data[1]
+
+    def __eq__(self, other: "Move"):
+        return self.data == other.data

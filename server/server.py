@@ -1,11 +1,13 @@
 import asyncio
+import os
 
+from controller.controller import GameController
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import Config, Server
 
-from controller.controller import GameController
-
+load_dotenv()
 app = FastAPI()
 controller = GameController()
 
@@ -20,7 +22,7 @@ app.add_middleware(
 config = Config(
     app=app,
     host="0.0.0.0",
-    port=3000,
+    port=os.getenv("PORT") or 3000,
 )
 
 
@@ -43,10 +45,18 @@ async def reset(board_id: str):
 async def make_move(request: Request, board_id: str):
     if not controller.game_exists(board_id):
         raise HTTPException(404)
+
+    if not controller.players_turn(board_id):
+        raise HTTPException(403)
+
     data = await request.json()
     idx = data["idx"]
-    x, y = idx % 8, idx // 8
+    x, y = controller.convert_index_to_xy(board_id, idx)
+
     print(f"Clicked ({x}, {y})")
+    if not controller.is_move_valid(board_id, x, y):
+        raise HTTPException(400)
+
     return controller.send_move(board_id, x, y)
 
 
@@ -54,7 +64,7 @@ async def make_move(request: Request, board_id: str):
 async def create_game(request: Request):
     data = await request.json()
     return controller.new_game(
-        data.get("size"), {"Easy": 0, "Medium": 1, "Hard": 2}[data.get("difficulty")]
+        data.get("size"), data.get("difficulty"), data.get("gamemode")
     )
 
 

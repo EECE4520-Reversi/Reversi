@@ -6,16 +6,15 @@ import Modal from "./Modal";
 const NewGame = ({
   setGameData,
 }: {
-  setGameData: Dispatch<SetStateAction<GameData>>;
+  setGameData: Dispatch<SetStateAction<GameData | undefined>>;
 }) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [boardSize, setBoardSize] = useState<number>(8);
-  const [difficulty, setDifficulty] = useState<"Easy" | "Medium" | "Hard">(
-    "Medium"
-  );
+  const [difficulty, setDifficulty] = useState<0 | 1 | 2>(1);
+  const [gamemode, setGameMode] = useState<1 | 2 | 3>(2);
 
   const onSubmit = () => {
-    createGame(boardSize, difficulty).then((gameData) => {
+    createGame(boardSize, difficulty, gamemode).then((gameData) => {
       setGameData(gameData);
       setVisible(false);
     });
@@ -34,10 +33,10 @@ const NewGame = ({
       </div>
       <div className="mt-3">
         <h2 className="inline p-2 text-xl">Difficulty:</h2>
-        <div className="flex justify-between">
+        <div className="flex justify-between space-x-5">
           <div
             className="flex items-center"
-            onClick={() => setDifficulty("Easy")}
+            onClick={() => setDifficulty(0)}
           >
             <input
               id="difficulty-radio-1"
@@ -51,7 +50,7 @@ const NewGame = ({
           </div>
           <div
             className="flex items-center"
-            onClick={() => setDifficulty("Medium")}
+            onClick={() => setDifficulty(1)}
           >
             <input
               defaultChecked
@@ -66,7 +65,7 @@ const NewGame = ({
           </div>
           <div
             className="flex items-center"
-            onClick={() => setDifficulty("Hard")}
+            onClick={() => setDifficulty(2)}
           >
             <input
               id="difficulty-radio-3"
@@ -76,6 +75,54 @@ const NewGame = ({
             />
             <label htmlFor="difficulty-radio-3" className="font-medium">
               Hard
+            </label>
+          </div>
+        </div>
+      </div>
+      <div className="mt-3">
+        <h2 className="inline p-2 text-xl">Gamemode:</h2>
+        <div className="flex justify-between space-x-5">
+          <div
+            className="flex items-center"
+            onClick={() => setGameMode(1)}
+          >
+            <input
+              id="gamemode-radio-1"
+              type="radio"
+              name="gamemode-radio"
+              className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
+            />
+            <label htmlFor="gamemode-radio-1" className="font-medium">
+              Local
+            </label>
+          </div>
+          <div
+            className="flex items-center"
+            onClick={() => setGameMode(2)}
+          >
+            <input
+              defaultChecked
+              id="gamemode-radio-2"
+              type="radio"
+              name="gamemode-radio"
+              className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
+            />
+            <label htmlFor="gamemode-radio-2" className="font-medium">
+              Versus AI
+            </label>
+          </div>
+          <div
+            className="flex items-center"
+            onClick={() => setGameMode(3)}
+          >
+            <input
+              id="gamemode-radio-3"
+              type="radio"
+              name="gamemode-radio"
+              className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
+            />
+            <label htmlFor="gamemode-radio-3" className="font-medium">
+              Online
             </label>
           </div>
         </div>
@@ -93,15 +140,14 @@ const NewGame = ({
         New Game
       </button>
 
-      {visible && (
         <Modal
           onSubmit={onSubmit}
-          onClose={() => setVisible(false)}
+          visible={visible}
+          setVisibility={setVisible}
           title="New Game"
           submitText="Create"
           component={newGameComponents}
         />
-      )}
     </div>
   );
 };

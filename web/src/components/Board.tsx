@@ -1,36 +1,32 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { GamePiece } from "./GamePiece";
 import { fetchBoard, resetBoard } from "../services/backendservice";
+import { GameData } from "../types/GameData";
+import Modal from "./Modal";
 
-const Board = ({ gameData }: { gameData: object }) => {
-  const [board, setBoard] = useState<number[]>([]);
-  const [score, setScore] = useState<number[]>([0, 0]);
-  const [size, setSize] = useState<number>(0);
-  const [boardId, setBoardId] = useState<string>("");
-  const [gameState, setGameState] = useState<number>(0);
+const Board = ({ gameData, setGameData }: { 
+  gameData: GameData,
+  setGameData: Dispatch<SetStateAction<GameData | undefined>>
+ }) => {
+  const [gameOverVisible, setGameOverVisible] = useState<boolean>(false);
 
-  const updateInternalState = (data: any) => {
-    console.log(data);
-    setBoard(data.board);
-    setScore(data.score);
-    setBoardId(data.id);
-    setSize(data.size);
-    setGameState(data.state);
-  };
 
-  const updateBoard = () => {
-    fetchBoard(boardId).then(updateInternalState);
+
+  // Sets the new game data, and then refetches
+  const updateBoard = async (data: GameData) => {
+    setGameData(data);
   };
 
   const emptyBoard = () => {
-    resetBoard(boardId).then(updateInternalState);
+    resetBoard(gameData.id).then(setGameData);
   };
 
   useEffect(() => {
-    if (Object.keys(gameData).length) {
-      updateInternalState(gameData);
-    }
-  }, [gameData]);
+    setGameOverVisible(gameData.state === 3);
+  }, [gameData.state])
+
+  const youWin = <h1 className="text-xl">You Win!</h1>
+  const youlose = <h1 className="text-xl">You Lose!</h1>
 
   return (
     <div className="p-3">
@@ -41,27 +37,36 @@ const Board = ({ gameData }: { gameData: object }) => {
         Reset
       </button>
 
-      <h3>Your Score: {score[0]}</h3>
-      <h3>Opponent Score: {score[1]}</h3>
-      <h3>State: {gameState}</h3>
+      <h3>Your Score: {gameData.score[0]}</h3>
+      <h3>Opponent Score: {gameData.score[1]}</h3>
+      <h3>State: {gameData.state}</h3>
 
       <div className="flex items-center justify-center">
         <div
-          className={`grid grid-cols-${size} grid-rows-${size} bg-green-700`}
+          className={`grid grid-cols-${gameData.size} grid-rows-${gameData.size} bg-green-700`}
         >
-          {board &&
-            board.map((e, i) => (
+          {gameData.board &&
+            gameData.board.map((e, i) => (
               <GamePiece
                 key={i}
                 idx={i}
                 state={e}
-                gameState={gameState}
-                boardId={boardId}
+                gameState={gameData.state}
+                boardId={gameData.id}
                 updateBoard={updateBoard}
               />
             ))}
         </div>
       </div>
+
+      <Modal
+          visible={gameOverVisible}
+          setVisibility={setGameOverVisible}
+          title="Game Over"
+          submitText="Create"
+          component={gameData.score[0] > gameData.score[1] ? youWin : youlose}
+        />
+        
     </div>
   );
 };
