@@ -220,7 +220,7 @@ class Logic:
         if not self.find_valid_moves(True):
             return True
 
-        # If other player can move, game is over
+        # If other player can move, game is not over
         return False
 
     def get_board(self) -> list[int]:

@@ -59,8 +59,9 @@ class GameController:
         self.games[board_id].take_turn(x, y)
 
         # if the game is a player vs AI game
-        if self.games[board_id].game_type == 2:
+        if self.games[board_id].game_type == 2 and self.games[board_id].logic.current_player == 2:
             self.games[board_id].take_ai_turn()
+
 
     def change_difficulty(self, board_id: str, difficulty: int) -> None:
         self.games[board_id].difficulty = difficulty

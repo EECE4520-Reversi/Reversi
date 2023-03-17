@@ -39,7 +39,7 @@ class Tile:
         self.x = pos_x
         self.y = pos_y
         self.player = player
-        self.minimax_score = None
+        self.minimax_score = 9999
 
     def getX(self) -> int:
         """Gets x position of this tile

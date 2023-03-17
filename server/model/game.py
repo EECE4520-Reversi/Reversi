@@ -163,9 +163,10 @@ class Game:
         else:
             return 0
 
-    def minimax_decision(self, board: Board, search_depth: int = 3) -> Move:
+    def minimax_decision(self, board: Board, search_depth: int) -> Move:
         """ "Given a board, assuming it is player 2's turn,
         returns the move that is best to take for player 2"""
+        print("search depth is ", search_depth)
         for row in board.matrix:
             for tile in row:
                 if tile.get_player() == 3:
@@ -176,7 +177,8 @@ class Game:
 
                     # take the next turn with the current valid tile
                     temp_game.take_turn(tile.getX(), tile.getY())
-                    tile.minimax_score = self.minimax(board, 1, 1, search_depth)
+                    tile.minimax_score = self.minimax(temp_game.logic.board, 1, 1, search_depth)
+                    print("heuristic score for [", tile.getX(), ",", tile.getY(), "] is ", tile.minimax_score)
 
         # sift through board, find minimum score and return the move
         move = None
@@ -187,6 +189,7 @@ class Game:
                     if tile.minimax_score < min_score:
                         min_score = tile.minimax_score
                         move = Move(tile.getX(), tile.getY())
+                        tile.minimax_score = 9999
 
         return move
 
@@ -195,6 +198,7 @@ class Game:
     ) -> int:
         """Given a board, board state, the current depth of the algorithm
         Returns the best minimax score of the valid moves"""
+        print("current depth is ",current_depth)
         if board_state != 3 and current_depth != search_depth:
             # for each valid move, calculate its minimax value
             minimax_values = []
@@ -203,7 +207,7 @@ class Game:
                     if tile.get_player() == 3:
                         # create a temporary game to calculate moves made on this tile
                         temp_game = Game(board.size)
-                        temp_game.logic.current_player = board_state
+                        temp_game.logic.current_player = copy.deepcopy(board_state)
                         temp_game.logic.board = copy.deepcopy(board)
 
                         # take the next turn with the current valid tile
@@ -216,7 +220,7 @@ class Game:
                         if temp_game.logic.game_over():
                             next_state = 3
                         else:
-                            next_state = temp_game.logic.current_player
+                            next_state = copy.deepcopy(temp_game.logic.current_player)
 
                         # call minimax
                         minimax_values.append(
@@ -224,7 +228,7 @@ class Game:
                                 temp_game.logic.board,
                                 next_state,
                                 current_depth + 1,
-                                search_depth,
+                                search_depth
                             )
                         )
 
