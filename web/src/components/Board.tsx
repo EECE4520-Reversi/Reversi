@@ -15,8 +15,6 @@ const Board = ({ gameData, setGameData }: {
   // Sets the new game data, and then refetches
   const updateBoard = async (data: GameData) => {
     setGameData(data);
-    await delay(2000);
-    setGameData(await fetchBoard(data.id));
   };
 
   const emptyBoard = () => {
