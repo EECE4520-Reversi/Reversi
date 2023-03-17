@@ -128,7 +128,7 @@ class GameController:
         Args:
             board_id (str): id of target game
         """
-        self.games[board_id] = Game(self.games[board_id].size)
+        self.games[board_id] = Game(self.games[board_id].size, self.games[board_id].difficulty)
 
     def get_data(self, board_id: str):
         """Return all getter results in dictionary
