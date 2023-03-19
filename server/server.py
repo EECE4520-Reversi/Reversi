@@ -67,6 +67,17 @@ async def create_game(request: Request):
         data.get("size"), data.get("difficulty"), data.get("gamemode")
     )
 
+@app.post("/register")
+async def register_user(request: Request):
+    data = await request.json
+    controller.register_user(data.get("username"), data.get("password"))
+    return 
+
+@app.post("/login")
+async def login_user(request: Request):
+    data = await request.json
+    controller.login_user(data.get("username"), data.get("password"))
+    return 
 
 server = Server(config)
 asyncio.run(server.serve())

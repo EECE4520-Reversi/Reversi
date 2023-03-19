@@ -1,6 +1,8 @@
 from typing import Dict, List
 
 from dao.gamedao import GameDao
+from dao.userdao import UserDao
+from model.user import User
 from model.game import Game
 
 
@@ -177,3 +179,12 @@ class GameController:
             "winner": self.get_winner(board_id),
             "size": self.games[board_id].size,
         }
+    
+    def register_user(self, username, password):
+        if (not (UserDao().fetch_specific_user(username))):
+            return UserDao().save_user(User(username, password))
+    
+    def login_user(self, username, password):
+        existingUser = UserDao().fetch_specific_user(username)
+        if existingUser.getPassword == password:
+            return existingUser
