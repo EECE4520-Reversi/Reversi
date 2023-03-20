@@ -178,6 +178,8 @@ class GameController:
             "state": self.get_state(board_id),
             "winner": self.get_winner(board_id),
             "size": self.games[board_id].size,
+            "difficulty": self.games[board_id].difficulty,
+            "type": self.games[board_id].game_type
         }
     
     def register_user(self, username, password):

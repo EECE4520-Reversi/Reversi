@@ -5,13 +5,17 @@ import Modal from "./Modal";
 
 const NewGame = ({
   setGameData,
+  gameData,
 }: {
   setGameData: Dispatch<SetStateAction<GameData | undefined>>;
+  gameData: GameData;
 }) => {
   const [visible, setVisible] = useState<boolean>(false);
-  const [boardSize, setBoardSize] = useState<number>(8);
-  const [difficulty, setDifficulty] = useState<0 | 1 | 2>(1);
-  const [gamemode, setGameMode] = useState<1 | 2 | 3>(2);
+  const [boardSize, setBoardSize] = useState<number>(gameData.size || 8);
+  const [difficulty, setDifficulty] = useState<0 | 1 | 2>(
+    gameData ? gameData.difficulty : 1
+  );
+  const [gamemode, setGameMode] = useState<1 | 2 | 3>(gameData.type || 2);
 
   const onSubmit = () => {
     createGame(boardSize, difficulty, gamemode).then((gameData) => {
@@ -34,11 +38,9 @@ const NewGame = ({
       <div className="mt-3">
         <h2 className="inline p-2 text-xl">Difficulty:</h2>
         <div className="flex justify-between space-x-5">
-          <div
-            className="flex items-center"
-            onClick={() => setDifficulty(0)}
-          >
+          <div className="flex items-center" onClick={() => setDifficulty(0)}>
             <input
+              defaultChecked={difficulty === 0}
               id="difficulty-radio-1"
               type="radio"
               name="difficult-radio"
@@ -48,12 +50,9 @@ const NewGame = ({
               Easy
             </label>
           </div>
-          <div
-            className="flex items-center"
-            onClick={() => setDifficulty(1)}
-          >
+          <div className="flex items-center" onClick={() => setDifficulty(1)}>
             <input
-              defaultChecked
+              defaultChecked={difficulty === 1}
               id="difficulty-radio-2"
               type="radio"
               name="difficult-radio"
@@ -63,11 +62,9 @@ const NewGame = ({
               Medium
             </label>
           </div>
-          <div
-            className="flex items-center"
-            onClick={() => setDifficulty(2)}
-          >
+          <div className="flex items-center" onClick={() => setDifficulty(2)}>
             <input
+              defaultChecked={difficulty === 2}
               id="difficulty-radio-3"
               type="radio"
               name="difficult-radio"
@@ -82,10 +79,7 @@ const NewGame = ({
       <div className="mt-3">
         <h2 className="inline p-2 text-xl">Gamemode:</h2>
         <div className="flex justify-between space-x-5">
-          <div
-            className="flex items-center"
-            onClick={() => setGameMode(1)}
-          >
+          <div className="flex items-center" onClick={() => setGameMode(1)}>
             <input
               id="gamemode-radio-1"
               type="radio"
@@ -96,10 +90,7 @@ const NewGame = ({
               Local
             </label>
           </div>
-          <div
-            className="flex items-center"
-            onClick={() => setGameMode(2)}
-          >
+          <div className="flex items-center" onClick={() => setGameMode(2)}>
             <input
               defaultChecked
               id="gamemode-radio-2"
@@ -111,10 +102,7 @@ const NewGame = ({
               Versus AI
             </label>
           </div>
-          <div
-            className="flex items-center"
-            onClick={() => setGameMode(3)}
-          >
+          <div className="flex items-center" onClick={() => setGameMode(3)}>
             <input
               id="gamemode-radio-3"
               type="radio"
@@ -140,14 +128,14 @@ const NewGame = ({
         New Game
       </button>
 
-        <Modal
-          onSubmit={onSubmit}
-          visible={visible}
-          setVisibility={setVisible}
-          title="New Game"
-          submitText="Create"
-          component={newGameComponents}
-        />
+      <Modal
+        onSubmit={onSubmit}
+        visible={visible}
+        setVisibility={setVisible}
+        title="New Game"
+        submitText="Create"
+        component={newGameComponents}
+      />
     </div>
   );
 };

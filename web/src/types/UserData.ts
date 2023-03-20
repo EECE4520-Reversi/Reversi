@@ -1,6 +1,5 @@
 export type UserData = {
-    username: string;
-    password: string;
-    elo: number;
+  username: string;
+  password: string;
+  elo: number;
 };
-

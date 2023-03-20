@@ -24,11 +24,15 @@ export const resetBoard = async (boardId: string) => {
   return data;
 };
 
-export const createGame = async (size: number, difficulty: number, gamemode: number) => {
+export const createGame = async (
+  size: number,
+  difficulty: number,
+  gamemode: number
+) => {
   const resp = await axios.post(`${API_BASE}/create`, {
     size,
     difficulty,
-    gamemode
+    gamemode,
   });
   const data: GameData = resp.data;
   return data;
@@ -39,15 +43,15 @@ export const registerUser = async (username: string, password: string) => {
     username,
     password,
   });
-  const data: UserData = resp.data
+  const data: UserData = resp.data;
   return data;
-}
+};
 
 export const loginUser = async (username: string, password: string) => {
   const resp = await axios.post(`${API_BASE}/login`, {
     username,
     password,
   });
-  const data: UserData = resp.data
+  const data: UserData = resp.data;
   return data;
-}
+};

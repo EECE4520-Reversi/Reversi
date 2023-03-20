@@ -7,9 +7,13 @@ import { GameData } from "../types/GameData";
 import { UserData } from "../types/UserData";
 import Nav from "./Nav";
 
-const Game = ({userData}: {
-  userData: UserData | undefined
-})=> {
+const Game = ({
+  userData,
+  setUserData,
+}: {
+  userData: UserData | undefined;
+  setUserData: (data: UserData | undefined) => void;
+}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [boardId, setBoardId] = useState<string>(
     new URLSearchParams(searchParams).get("id") || ""
@@ -41,18 +45,23 @@ const Game = ({userData}: {
   }, [gameData]);
 
   return (
+    <>
+    
+    <Nav userData={userData} setUserData={setUserData} />
+    
     <div className="grid place-items-center">
-      <Nav />
       <h1 className="text-8xl text-white-200 font-bold mb-5">Reversi</h1>
-      <h1 className="text-white">{userData?.username}</h1>
       {gameData && (
         <>
-          <NewGame setGameData={setGameData} />
+          <NewGame setGameData={setGameData} gameData={gameData} />
           <Board setGameData={setGameData} gameData={gameData} />
         </>
       )}
     </div>
+
+    </>
+
   );
-}
+};
 
 export default Game;

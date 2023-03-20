@@ -216,7 +216,7 @@ class Game:
     ) -> int:
         """Given a board, board state, the current depth of the algorithm
         Returns the best minimax score of the valid moves"""
-        if board_state != 3 and current_depth != search_depth:
+        if board_state != 3 and current_depth <= search_depth:
             # for each valid move, calculate its minimax value
             minimax_values = []
             for row in board.matrix:
