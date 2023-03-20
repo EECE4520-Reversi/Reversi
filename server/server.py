@@ -69,15 +69,19 @@ async def create_game(request: Request):
 
 @app.post("/register")
 async def register_user(request: Request):
-    data = await request.json
-    controller.register_user(data.get("username"), data.get("password"))
-    return 
+    data = await request.json()
+    if not controller.user_exists(data.get("username")):
+        return controller.register_user(data.get("username"), data.get("password"))
+    raise HTTPException(403, "User with that name already exists")
+
 
 @app.post("/login")
 async def login_user(request: Request):
-    data = await request.json
-    controller.login_user(data.get("username"), data.get("password"))
-    return 
+    data = await request.json()
+    if controller.user_exists(data.get("username")):
+        return controller.login_user(data.get("username"), data.get("password"))
+    raise HTTPException(403, "Invalid credentials")
+
 
 server = Server(config)
 asyncio.run(server.serve())

@@ -1,34 +1,29 @@
 class User:
-    def __init__(self):
-        self.username = None
-        self.password = None
-        self.elo = 0
-        self.games = []
+    def __init__(self, username, password, elo=0):
+        self.username = username
+        self.password = password
+        self.elo = elo
 
-    def register(self, username, password):
-            if legalUsername(username):
-                 self.username = username
-            if legalPassword(password):
-                 self.password = password
     
     def to_dict(self):
          return {
-              "_username" : self.username,
+              "username" : self.username,
               "password" : self.password,
               "elo" : self.elo,
-              "games" : self.games
          }
 
     @classmethod
     def from_dict(cls, data: dict) -> "User":
         user = cls(
-            data.get("_username"),
+            data.get("username"),
             data.get("password"),
             data.get("elo"),
-            # UNSURE IF WORKS 
-            # data.get("games"),
         )
         return user
+    
+    def getPassword(self):
+         return self.password
+    
 def legalUsername(username):
     return username
     

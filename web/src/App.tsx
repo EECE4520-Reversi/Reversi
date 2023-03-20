@@ -1,54 +1,19 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-import Board from "./components/Board";
-import NewGame from "./components/NewGame";
-import { createGame, fetchBoard } from "./services/backendservice";
-import { useSearchParams } from "react-router-dom";
-import { GameData } from "./types/GameData";
+import { useState } from "react"
+import { Routes, Route } from "react-router-dom"
+import Game from "./components/Game"
+import Login from "./components/Login"
+import { UserData } from "./types/UserData"
+import Nav from "./components/Nav"
+import "./App.css"
 
-function App() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [boardId, setBoardId] = useState<string>(
-    new URLSearchParams(searchParams).get("id") || ""
-  );
-  const [gameData, setGameData] = useState<GameData>();
+const App = () =>{
+    const [userData, setUserData] = useState<UserData | undefined>()
 
-  useEffect(() => {
-    fetchBoard(boardId)
-      .then((gameData) => {
-        setGameData(gameData);
-      })
-      .catch(() => {
-        createGame(8, 1, 2).then((gameData) => {
-          console.log(gameData);
-          setBoardId(gameData.id);
-          setGameData(gameData);
-        });
-      });
-  }, []);
-
-  useEffect(() => {
-    const params = new URLSearchParams();
-    params.append("id", boardId);
-    setSearchParams(params);
-  }, [boardId]);
-
-  useEffect(() => {
-    if (gameData && gameData.id !== undefined) setBoardId(gameData.id);
-  }, [gameData]);
-
-  return (
-    <div className="container">
-      <h1 className="text-8xl text-white-200 font-bold mb-5">Reversi</h1>
-
-      {gameData && (
-        <>
-          <NewGame setGameData={setGameData} />
-          <Board setGameData={setGameData} gameData={gameData} />
-        </>
-      )}
-    </div>
-  );
+    return <>
+    <Routes>
+    <Route path="/" element={<Game userData={userData}/>}/>
+    <Route path="/login" element={<Login setUserData={setUserData}/>}/>
+</Routes></>
 }
 
-export default App;
+export default App

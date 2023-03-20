@@ -35,7 +35,7 @@ export const createGame = async (size: number, difficulty: number, gamemode: num
 };
 
 export const registerUser = async (username: string, password: string) => {
-  const resp = await axios.post(`${API_BASE}/regsiter`, {
+  const resp = await axios.post(`${API_BASE}/register`, {
     username,
     password,
   });

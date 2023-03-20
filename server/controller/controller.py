@@ -4,7 +4,7 @@ from dao.gamedao import GameDao
 from dao.userdao import UserDao
 from model.user import User
 from model.game import Game
-
+import hashlib
 
 class GameController:
     """Interface object for Model, View, and Database
@@ -181,10 +181,12 @@ class GameController:
         }
     
     def register_user(self, username, password):
-        if (not (UserDao().fetch_specific_user(username))):
-            return UserDao().save_user(User(username, password))
+        return UserDao().save_user(User(username, hashlib.sha256(password.encode()).hexdigest())).to_dict()
     
     def login_user(self, username, password):
-        existingUser = UserDao().fetch_specific_user(username)
-        if existingUser.getPassword == password:
-            return existingUser
+        existingUser = User.from_dict(UserDao().fetch_specific_user(username))
+        if existingUser.password == hashlib.sha256(password.encode()).hexdigest():
+            return existingUser.to_dict()
+
+    def user_exists(self, username):
+        return UserDao().fetch_specific_user(username)
