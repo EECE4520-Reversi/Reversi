@@ -6,6 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import { GameData } from "../types/GameData";
 import { UserData } from "../types/UserData";
 import Nav from "./Nav";
+import { Difficulty, GameType } from "../types/Enums";
 
 const Game = ({
   userData,
@@ -26,7 +27,7 @@ const Game = ({
         setGameData(gameData);
       })
       .catch(() => {
-        createGame(8, 1, 2).then((gameData) => {
+        createGame(8, Difficulty.MEDIUM, GameType.AI).then((gameData) => {
           console.log(gameData);
           setBoardId(gameData.id);
           setGameData(gameData);
@@ -46,21 +47,18 @@ const Game = ({
 
   return (
     <>
-    
-    <Nav userData={userData} setUserData={setUserData} />
-    
-    <div className="grid place-items-center">
-      <h1 className="text-8xl text-white-200 font-bold mb-5">Reversi</h1>
-      {gameData && (
-        <>
-          <NewGame setGameData={setGameData} gameData={gameData} />
-          <Board setGameData={setGameData} gameData={gameData} />
-        </>
-      )}
-    </div>
+      <Nav userData={userData} setUserData={setUserData} />
 
+      <div className="grid place-items-center">
+        <h1 className="text-8xl text-white-200 font-bold mb-5">Reversi</h1>
+        {gameData && (
+          <>
+            <NewGame setGameData={setGameData} gameData={gameData} />
+            <Board setGameData={setGameData} gameData={gameData} />
+          </>
+        )}
+      </div>
     </>
-
   );
 };
 

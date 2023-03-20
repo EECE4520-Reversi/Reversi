@@ -1,6 +1,7 @@
 from typing import List
 
 from model.board import Board
+from model.enums import GameState, TileState
 from model.move import Move
 from model.tile import Tile
 
@@ -44,7 +45,7 @@ class Logic:
         """
         self.size = size
         self.board = board
-        self.current_player = player
+        self.current_player = GameState(player)
         if not self.board:
             self.board = Board(size)
             self.board.initialize_board()
@@ -77,7 +78,7 @@ class Logic:
 
         # If any flip tiles found, continue
         # Append given move to list
-        tiles_to_flip.append(Tile(3, move.col, move.row))
+        tiles_to_flip.append(Tile(TileState.VIABLE, move.col, move.row))
 
         # Update board by flipping all found tiles to the current player's state
         self.board.update_board(tiles_to_flip, self.current_player)

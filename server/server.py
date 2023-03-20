@@ -67,6 +67,7 @@ async def create_game(request: Request):
         data.get("size"), data.get("difficulty"), data.get("gamemode")
     )
 
+
 @app.post("/register")
 async def register_user(request: Request):
     data = await request.json()

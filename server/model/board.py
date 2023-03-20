@@ -1,5 +1,6 @@
 from typing import List
 
+from model.enums import TileState
 from model.tile import Tile
 
 
@@ -71,16 +72,16 @@ class Board:
                 # Swap axis to convert matrix positions to euclidean plane positions
                 self.matrix[a][b].x = b
                 self.matrix[a][b].y = a
-                self.matrix[a][b].player = 0
+                self.matrix[a][b].player = TileState.EMPTY
 
         # fill middle 4 tiles with starting configuration
         midLow = self.size // 2 - 1
         midHigh = self.size // 2
 
-        self.matrix[midLow][midLow].player = 1
-        self.matrix[midLow][midHigh].player = 2
-        self.matrix[midHigh][midLow].player = 2
-        self.matrix[midHigh][midHigh].player = 1
+        self.matrix[midLow][midLow].player = TileState.WHITE
+        self.matrix[midLow][midHigh].player = TileState.BLACK
+        self.matrix[midHigh][midLow].player = TileState.BLACK
+        self.matrix[midHigh][midHigh].player = TileState.WHITE
 
         # No return data
         return
@@ -100,9 +101,9 @@ class Board:
         for row in self.matrix:
             for tile in row:
                 # If black tile, increment black score, else increment white
-                if tile.player == 1:
+                if tile.player == TileState.WHITE:
                     white_score += 1
-                elif tile.player == 2:
+                elif tile.player == TileState.BLACK:
                     black_score += 1
 
         # Pack two scores into list for return

@@ -3,6 +3,7 @@ import { GamePiece } from "./GamePiece";
 import { resetBoard } from "../services/backendservice";
 import { GameData } from "../types/GameData";
 import Modal from "./Modal";
+import { GameState } from "../types/Enums";
 
 type Color = { value: string; name: string };
 const colors = [
@@ -27,7 +28,7 @@ const Board = ({
   const [player2Color, setPlayer2Color] = useState<string>("#000000");
 
   console.log(gameData);
-  console.log('Game state: ', gameData.state);
+  console.log("Game state: ", gameData.state);
 
   // Sets the new game data, and then refetches
   const updateBoard = async (data: GameData) => {
@@ -40,7 +41,7 @@ const Board = ({
   };
 
   useEffect(() => {
-    setGameOverVisible(gameData.state === 3);
+    setGameOverVisible(gameData.state === GameState.GAMEOVER);
   }, [gameData.state]);
 
   const youWin = <h1 className="text-xl">You Win!</h1>;
@@ -50,15 +51,30 @@ const Board = ({
     <div className="grid">
       <div className="mt-3 flex justify-between">
         <h2 className="inline p-2 text-xl mr-10">Board Color</h2>
-        <input className="my-auto" onChange={(e) => setBoardColor(e.target.value)} type="color" value={boardColor} />
+        <input
+          className="my-auto"
+          onChange={(e) => setBoardColor(e.target.value)}
+          type="color"
+          value={boardColor}
+        />
       </div>
       <div className="mt-3 flex justify-between">
         <h2 className="inline p-2 text-xl">Player 1 Color</h2>
-        <input className="my-auto" onChange={(e) => setPlayer1Color(e.target.value)} type="color" value={player1Color} />
+        <input
+          className="my-auto"
+          onChange={(e) => setPlayer1Color(e.target.value)}
+          type="color"
+          value={player1Color}
+        />
       </div>
       <div className="mt-3 flex justify-between">
         <h2 className="inline p-2 text-xl">Player 2 Color</h2>
-        <input className="my-auto" onChange={(e) => setPlayer2Color(e.target.value)} type="color" value={player2Color} />
+        <input
+          className="my-auto"
+          onChange={(e) => setPlayer2Color(e.target.value)}
+          type="color"
+          value={player2Color}
+        />
       </div>
     </div>
   );
@@ -79,8 +95,6 @@ const Board = ({
         Settings
       </button>
 
-
-
       <div className="flex justify-around mt-5">
         <h3>Your Score: {gameData.score[0]}</h3>
         <h3>Opponent Score: {gameData.score[1]}</h3>
@@ -89,7 +103,7 @@ const Board = ({
       <div className="flex items-center justify-center">
         <div
           className={`grid grid-cols-${gameData.size} grid-rows-${gameData.size}`}
-          style={{backgroundColor: `${boardColor}`}}
+          style={{ backgroundColor: `${boardColor}` }}
         >
           {gameData.board &&
             gameData.board.map((e, i) => (

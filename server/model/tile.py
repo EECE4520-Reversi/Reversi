@@ -1,3 +1,6 @@
+from model.enums import TileState
+
+
 class Tile:
     """Object to store the position and state of each game piece
 
@@ -24,7 +27,7 @@ class Tile:
         """
         self.x = pos_x
         self.y = pos_y
-        self.player = player
+        self.player = TileState(player)
         self.minimax_score = None
 
     def to_dict(self):
