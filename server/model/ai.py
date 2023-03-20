@@ -1,4 +1,5 @@
 from model.board import Board
+from model.enums import TileState, GameState
 from model.game import Game
 from model.move import Move
 
@@ -36,23 +37,23 @@ class AI:
         """ "Given a board, returns the move that is best to take for the AI"""
         for row in board.matrix:
             for tile in row:
-                if tile.player == 3:
+                if tile.player == TileState.VIABLE:
                     # create a temporary game to calculate moves made on this tile
                     temp_game = Game(size=board.size)
-                    temp_game.logic.current_player = 2
+                    temp_game.logic.current_player = GameState.PLAYER2
                     temp_game.logic.board = board
 
                     # take the next turn with the current valid tile
                     temp_game.take_turn(tile.x, tile.y)
                     tile.minimax_score = self.minimax(
-                        temp_game.logic.board, 1, 1, search_depth
+                        temp_game.logic.board, GameState.PLAYER1, 1, search_depth
                     )
 
         move = None
         min_score = 9999
         for row in board.matrix:
             for tile in row:
-                if tile.player == 3:
+                if tile.player == TileState.VIABLE:
                     if tile.minimax_score < min_score:
                         min_score = tile.minimax_score
                         move = Move(tile.x, tile.y)
@@ -69,7 +70,7 @@ class AI:
             minimax_values = []
             for row in board.matrix:
                 for tile in row:
-                    if tile.player == 3:
+                    if tile.player == TileState.VIABLE:
                         # create a temporary game to calculate moves made on this tile
                         temp_game = Game(size=board.size)
                         temp_game.logic.current_player = board_state
@@ -98,13 +99,8 @@ class AI:
                         )
 
             # find the current player based on search depth
-            if current_depth % 2 == 0:
-                current_player = "AI"
-            else:
-                current_player = "Player"
-
             # take the min minimax value if it is AI turn or max value if it is the player
-            if current_player == "AI":
+            if current_depth % 2 == 0:
                 return min(minimax_values)
             else:
                 return max(minimax_values)

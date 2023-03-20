@@ -1,20 +1,22 @@
-import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { makeMove } from "../services/backendservice";
+import { GameState, GameType, TileState } from "../types/Enums";
 import { GameData } from "../types/GameData";
 
 export const GamePiece = ({
   state,
   idx,
-  gameState,
-  boardId,
+  gameData,
   updateBoard,
+  player1Color,
+  player2Color,
 }: {
-  state: number;
+  state: TileState;
   idx: number;
-  gameState: number;
-  boardId: string;
+  gameData: GameData;
   updateBoard: (data: GameData) => void;
+  player1Color: string;
+  player2Color: string;
 }) => {
   /*
     #   0 if empty
@@ -23,21 +25,22 @@ export const GamePiece = ({
     #   3 is a viable Move
     */
 
-  const colors = ["bg-transparent", "bg-white", "bg-black"];
-  const [colorState, setColorState] = useState(state);
-  const [lastColorState, setLastColorState] = useState<number | undefined>();
+  const colors = ["transparent", player1Color, player2Color];
+  const [colorState, setColorState] = useState<TileState>(state);
+  const [lastColorState, setLastColorState] = useState<TileState | undefined>();
   const [angle, setAngle] = useState<number>(0);
 
-  const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+  const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
   const onClick = async () => {
-    if (state !== 3) return;
+    if (state !== TileState.VIABLE) return;
 
-    const data = await makeMove(idx, boardId)
-    updateBoard(data[0])
-    await delay(1000);
-    updateBoard(data[1])
-    
+    const data = await makeMove(idx, gameData.id);
+    updateBoard(data[0]);
+    if (data.length > 1) {
+      await delay(1000);
+      updateBoard(data[1]);
+    }
   };
 
   useEffect(() => {
@@ -48,25 +51,38 @@ export const GamePiece = ({
 
   let outerStyle;
   let innerStyle;
+  let style = {};
   // If we were just selected
-  if (lastColorState === 3 && colorState !== 3) {
+  if (lastColorState === TileState.VIABLE && colorState !== TileState.VIABLE) {
     outerStyle = "picked";
-    innerStyle = colors[colorState]; // Remove delay for new piece
-  } else if (colorState !== 3) {
+    style = { backgroundColor: colors[colorState] }; // Remove delay for new piece
+  } else if (colorState !== TileState.VIABLE) {
     // Normal piece
     outerStyle = `rotate-x-${angle}`;
-    innerStyle = "delay-300 " + colors[colorState];
-  } else {
+    innerStyle = "delay-300 ";
+    style = { backgroundColor: colors[colorState] };
+  } else if (
+    gameData.type == GameType.LOCAL ||
+    (gameData.type == GameType.AI && gameData.state != GameState.PLAYER2)
+  ) {
+    // Hide picks if vs AI and its AI turn
     // Pickable piece
     outerStyle = `pickable`;
     innerStyle = "pickable-inner ";
-    innerStyle += gameState === 1 ? "hover:bg-white" : "hover:bg-black";
+    innerStyle +=
+      gameData.state === GameState.PLAYER1
+        ? "hover:bg-white"
+        : "hover:bg-black";
+    style = {};
   }
 
   return (
     <div className="border-gray-400 border-2 p-1">
       <div className={outerStyle} onClick={onClick}>
-        <div className={`${innerStyle} rounded-full w-12 h-12`} />
+        <div
+          className={`${innerStyle} rounded-full w-12 h-12`}
+          style={{ backgroundColor: colors[colorState] }}
+        ></div>
       </div>
     </div>
   );

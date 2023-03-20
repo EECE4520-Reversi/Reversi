@@ -1,17 +1,28 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { createGame } from "../services/backendservice";
+import { Difficulty, GameType } from "../types/Enums";
 import { GameData } from "../types/GameData";
 import Modal from "./Modal";
 
+const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
+
 const NewGame = ({
   setGameData,
+  gameData,
 }: {
   setGameData: Dispatch<SetStateAction<GameData | undefined>>;
+  gameData: GameData;
 }) => {
   const [visible, setVisible] = useState<boolean>(false);
-  const [boardSize, setBoardSize] = useState<number>(8);
-  const [difficulty, setDifficulty] = useState<0 | 1 | 2>(1);
-  const [gamemode, setGameMode] = useState<1 | 2 | 3>(2);
+  const [boardSize, setBoardSize] = useState<number>(gameData.size || 8);
+  const [difficulty, setDifficulty] = useState<Difficulty>(
+    gameData ? gameData.difficulty : Difficulty.MEDIUM
+  );
+  const [gamemode, setGameMode] = useState<GameType>(
+    gameData.type || GameType.AI
+  );
 
   const onSubmit = () => {
     createGame(boardSize, difficulty, gamemode).then((gameData) => {
@@ -34,97 +45,48 @@ const NewGame = ({
       <div className="mt-3">
         <h2 className="inline p-2 text-xl">Difficulty:</h2>
         <div className="flex justify-between space-x-5">
-          <div
-            className="flex items-center"
-            onClick={() => setDifficulty(0)}
-          >
-            <input
-              id="difficulty-radio-1"
-              type="radio"
-              name="difficult-radio"
-              className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
-            />
-            <label htmlFor="difficulty-radio-1" className="font-medium">
-              Easy
-            </label>
-          </div>
-          <div
-            className="flex items-center"
-            onClick={() => setDifficulty(1)}
-          >
-            <input
-              defaultChecked
-              id="difficulty-radio-2"
-              type="radio"
-              name="difficult-radio"
-              className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
-            />
-            <label htmlFor="difficulty-radio-2" className="font-medium">
-              Medium
-            </label>
-          </div>
-          <div
-            className="flex items-center"
-            onClick={() => setDifficulty(2)}
-          >
-            <input
-              id="difficulty-radio-3"
-              type="radio"
-              name="difficult-radio"
-              className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
-            />
-            <label htmlFor="difficulty-radio-3" className="font-medium">
-              Hard
-            </label>
-          </div>
+          {[Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD].map(
+            (val) => {
+              return (
+                <div
+                  className="flex items-center"
+                  onClick={() => setDifficulty(val)}
+                >
+                  <input
+                    defaultChecked={difficulty === val}
+                    id={`difficulty-radio-${val}`}
+                    type="radio"
+                    name="difficult-radio"
+                    className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
+                  />
+                  <label htmlFor={`difficulty-radio-${val}`} className="font-medium">
+                    {capitalize(Difficulty[val])}
+                  </label>
+                </div>
+              );
+            }
+          )}
         </div>
       </div>
       <div className="mt-3">
         <h2 className="inline p-2 text-xl">Gamemode:</h2>
         <div className="flex justify-between space-x-5">
-          <div
-            className="flex items-center"
-            onClick={() => setGameMode(1)}
-          >
+          {[GameType.LOCAL, GameType.AI, GameType.ONLINE].map((val) => {
+            return <div className="flex items-center" onClick={() => setGameMode(val)}>
             <input
-              id="gamemode-radio-1"
+              defaultChecked={gamemode === val}
+              id={`gamemode-radio-${val}`}
               type="radio"
               name="gamemode-radio"
               className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
             />
-            <label htmlFor="gamemode-radio-1" className="font-medium">
-              Local
+            <label htmlFor={`gamemode-radio-${val}`} className="font-medium">
+            {capitalize(GameType[val])}
             </label>
           </div>
-          <div
-            className="flex items-center"
-            onClick={() => setGameMode(2)}
-          >
-            <input
-              defaultChecked
-              id="gamemode-radio-2"
-              type="radio"
-              name="gamemode-radio"
-              className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
-            />
-            <label htmlFor="gamemode-radio-2" className="font-medium">
-              Versus AI
-            </label>
-          </div>
-          <div
-            className="flex items-center"
-            onClick={() => setGameMode(3)}
-          >
-            <input
-              id="gamemode-radio-3"
-              type="radio"
-              name="gamemode-radio"
-              className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
-            />
-            <label htmlFor="gamemode-radio-3" className="font-medium">
-              Online
-            </label>
-          </div>
+          })}
+          
+
         </div>
       </div>
     </div>
@@ -140,14 +102,14 @@ const NewGame = ({
         New Game
       </button>
 
-        <Modal
-          onSubmit={onSubmit}
-          visible={visible}
-          setVisibility={setVisible}
-          title="New Game"
-          submitText="Create"
-          component={newGameComponents}
-        />
+      <Modal
+        onSubmit={onSubmit}
+        visible={visible}
+        setVisibility={setVisible}
+        title="New Game"
+        submitText="Create"
+        component={newGameComponents}
+      />
     </div>
   );
 };

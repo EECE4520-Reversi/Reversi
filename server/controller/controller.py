@@ -1,7 +1,11 @@
 from typing import Dict, List
 
 from dao.gamedao import GameDao
+from dao.userdao import UserDao
+from model.enums import GameType, GameState, TileState
+from model.user import User
 from model.game import Game
+import hashlib
 
 
 class GameController:
@@ -41,7 +45,7 @@ class GameController:
             difficult (int): Match difficulty
             game_type (int): Game type
         """
-        board_id = str(len(self.games.keys()))
+        board_id = str(len(self.games.keys()) + 1)
         self.games[board_id] = Game(
             board_id=board_id, size=size, search_depth=difficult, game_type=game_type
         )
@@ -58,11 +62,16 @@ class GameController:
         Returns:
             bool: If its player one's turn
         """
-        return self.games[board_id].current_turn == 1
+
+        # Its the players turn if its local play, or actually their turn
+        return (
+            self.games[board_id].game_type == GameType.LOCAL
+            or self.games[board_id].current_turn == GameState.PLAYER1
+        )
 
     def is_move_valid(self, board_id: str, x: int, y: int):
         game = self.games[board_id]
-        return game.logic.board.get_tile(x, y).player == 3
+        return game.logic.board.get_tile(x, y).player == TileState.VIABLE
 
     def convert_index_to_xy(self, board_id, idx):
         game = self.games[board_id]
@@ -84,7 +93,7 @@ class GameController:
         datas = [self.get_data(board_id)]
 
         # if the game is a player vs AI game
-        if game.game_type == 2:
+        if game.game_type == GameType.AI:
             game.take_ai_turn()
             datas.append(self.get_data(board_id))
 
@@ -120,9 +129,9 @@ class GameController:
         """
         # print("Getting game state")
         if self.games[board_id].logic.game_over():
-            return 3
+            return GameState.GAMEOVER.value
         else:
-            return self.games[board_id].current_turn
+            return self.games[board_id].current_turn.value
 
     def get_winner(self, board_id: str) -> int:
         """Returns the winner of the target game
@@ -176,4 +185,21 @@ class GameController:
             "state": self.get_state(board_id),
             "winner": self.get_winner(board_id),
             "size": self.games[board_id].size,
+            "difficulty": self.games[board_id].difficulty,
+            "type": self.games[board_id].game_type,
         }
+
+    def register_user(self, username, password):
+        return (
+            UserDao()
+            .save_user(User(username, hashlib.sha256(password.encode()).hexdigest()))
+            .to_dict()
+        )
+
+    def login_user(self, username, password):
+        existingUser = User.from_dict(UserDao().fetch_specific_user(username))
+        if existingUser.password == hashlib.sha256(password.encode()).hexdigest():
+            return existingUser.to_dict()
+
+    def user_exists(self, username):
+        return UserDao().fetch_specific_user(username)
