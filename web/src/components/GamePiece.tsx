@@ -5,16 +5,14 @@ import { GameData } from "../types/GameData";
 export const GamePiece = ({
   state,
   idx,
-  gameState,
-  boardId,
+  gameData,
   updateBoard,
   player1Color,
   player2Color,
 }: {
   state: number;
   idx: number;
-  gameState: number;
-  boardId: string;
+  gameData: GameData;
   updateBoard: (data: GameData) => void;
   player1Color: string;
   player2Color: string;
@@ -36,10 +34,12 @@ export const GamePiece = ({
   const onClick = async () => {
     if (state !== 3) return;
 
-    const data = await makeMove(idx, boardId);
+    const data = await makeMove(idx, gameData.id);
     updateBoard(data[0]);
-    await delay(1000);
-    updateBoard(data[1]);
+    if (data.length > 1) {
+      await delay(1000);
+      updateBoard(data[1]);
+    }
   };
 
   useEffect(() => {
@@ -60,11 +60,11 @@ export const GamePiece = ({
     outerStyle = `rotate-x-${angle}`;
     innerStyle = "delay-300 ";
     style = {backgroundColor: colors[colorState]};
-  } else if (gameState == 1) {
+  } else if (gameData.type == 1 || (gameData.type == 2 && gameData.state != 2)) { // Hide picks if vs AI and its AI turn
     // Pickable piece
     outerStyle = `pickable`;
     innerStyle = "pickable-inner ";
-    innerStyle += gameState === 1 ? "hover:bg-white" : "hover:bg-black";
+    innerStyle += gameData.state === 1 ? "hover:bg-white" : "hover:bg-black";
     style = {};
   }
 

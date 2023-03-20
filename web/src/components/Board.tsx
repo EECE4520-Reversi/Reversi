@@ -31,6 +31,7 @@ const Board = ({
 
   // Sets the new game data, and then refetches
   const updateBoard = async (data: GameData) => {
+    console.log(data);
     setGameData(data);
   };
 
@@ -96,8 +97,7 @@ const Board = ({
                 key={i}
                 idx={i}
                 state={e}
-                gameState={gameData.state}
-                boardId={gameData.id}
+                gameData={gameData}
                 updateBoard={updateBoard}
                 player1Color={player1Color}
                 player2Color={player2Color}

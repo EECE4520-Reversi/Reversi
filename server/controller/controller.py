@@ -60,7 +60,9 @@ class GameController:
         Returns:
             bool: If its player one's turn
         """
-        return self.games[board_id].current_turn == 1
+
+        # Its the players turn if its local play, or actually their turn
+        return self.games[board_id].game_type == 1 or self.games[board_id].current_turn == 1
 
     def is_move_valid(self, board_id: str, x: int, y: int):
         game = self.games[board_id]

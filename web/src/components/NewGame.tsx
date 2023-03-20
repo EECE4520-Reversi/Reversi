@@ -81,6 +81,7 @@ const NewGame = ({
         <div className="flex justify-between space-x-5">
           <div className="flex items-center" onClick={() => setGameMode(1)}>
             <input
+              defaultChecked={gamemode === 1}
               id="gamemode-radio-1"
               type="radio"
               name="gamemode-radio"
@@ -92,7 +93,7 @@ const NewGame = ({
           </div>
           <div className="flex items-center" onClick={() => setGameMode(2)}>
             <input
-              defaultChecked
+              defaultChecked={gamemode === 2}
               id="gamemode-radio-2"
               type="radio"
               name="gamemode-radio"
@@ -104,6 +105,7 @@ const NewGame = ({
           </div>
           <div className="flex items-center" onClick={() => setGameMode(3)}>
             <input
+              defaultChecked={gamemode === 3}
               id="gamemode-radio-3"
               type="radio"
               name="gamemode-radio"
