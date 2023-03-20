@@ -43,7 +43,7 @@ class GameController:
             difficult (int): Match difficulty
             game_type (int): Game type
         """
-        board_id = str(len(self.games.keys()))
+        board_id = str(len(self.games.keys()) + 1)
         self.games[board_id] = Game(
             board_id=board_id, size=size, search_depth=difficult, game_type=game_type
         )
