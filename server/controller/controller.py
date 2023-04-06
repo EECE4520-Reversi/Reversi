@@ -2,9 +2,13 @@ from typing import Dict, List
 
 from dao.gamedao import GameDao
 from dao.userdao import UserDao
-from model.enums import GameType, GameState, TileState
+from model.enums import GameType, GameState, TileState, Difficulty
 from model.user import User
 from model.game import Game
+from model.ai_model.ai import AI
+from model.ai_model.ai_easy import AI_Easy
+from model.ai_model.ai_medium import AI_Medium
+from model.ai_model.ai_hard import AI_Hard
 import hashlib
 
 
@@ -36,6 +40,10 @@ class GameController:
         for db_game in GameDao().fetch_games():
             game = Game.from_dict(db_game)
             self.games[game.board_id] = game
+        
+        self.easy_ai = AI_Easy()
+        self.medium_ai = AI_Medium()
+        self.hard_ai = AI_Hard()
 
     def new_game(self, size: int, difficult: int, game_type: int):
         """Creates a new game using the given settings
@@ -94,11 +102,43 @@ class GameController:
 
         # if the game is a player vs AI game
         if game.game_type == GameType.AI:
-            game.take_ai_turn()
+            if game.difficulty == Difficulty.EASY:
+                self.take_ai_turn(game, self.easy_ai)
+            if game.difficulty == Difficulty.MEDIUM:
+                self.take_ai_turn(game, self.medium_ai)
+            if game.difficulty == Difficulty.HARD:
+                self.take_ai_turn(game, self.hard_ai)
+
             datas.append(self.get_data(board_id))
 
         GameDao().save_game(game)
         return datas
+    
+    def take_ai_turn(self, game: Game, ai: AI) -> bool:
+        """Calls necessary logic to interpret an AI's move
+        Returns:
+            bool: True if move was successful. False on error.
+        """
+
+        # pass Move to logic for calculating and updating
+        nextMove = ai.minimax_decision(game.logic.board, game.difficulty)
+        # Make the move to switch players
+        if nextMove is not None:
+            game.make_move(nextMove)
+
+        game.logic.switch_players()
+
+        # Update valid moves for next player
+        game.logic.find_valid_moves(True)
+
+        # check if game is over
+        if game.game_over():
+            # get winner and end turn
+            game.winner = game.end_game()
+            return False
+
+        # end turn
+        return True
 
     def change_difficulty(self, board_id: str, difficulty: int) -> None:
         self.games[board_id].difficulty = difficulty
