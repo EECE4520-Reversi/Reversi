@@ -121,7 +121,7 @@ class GameController:
         """
 
         # pass Move to logic for calculating and updating
-        nextMove = ai.minimax_decision(game.logic.board, game.difficulty)
+        nextMove = ai.minimax_decision(game.logic.board)
         # Make the move to switch players
         if nextMove is not None:
             game.make_move(nextMove)

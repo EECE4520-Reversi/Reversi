@@ -1,13 +1,17 @@
 from model.ai_model.ai import AI
 from model.board import Board
-from model.enums import TileState, GameState
+from model.enums import TileState, GameState, Difficulty
 from model.game import Game
 from model.move import Move
 import copy
 
 class AI_Easy(AI):
     """A class to represent AI agents operating with an easy difficulty"""
-    def minimax_decision(self, board: Board, search_depth: int = 0) -> Move:
+
+    def __init__(self) -> None:
+        self.difficulty = Difficulty.EASY
+
+    def minimax_decision(self, board: Board) -> Move:
         """ "Given a board, assuming it is player 2's turn,
         returns the move that is best to take for player 2"""
         for row in board.matrix:
@@ -21,7 +25,7 @@ class AI_Easy(AI):
                     # take the next turn with the current valid tile
                     temp_game.take_turn(tile.x, tile.y)
                     tile.minimax_score = self.minimax(
-                        temp_game.logic.board, GameState.PLAYER1, 1, search_depth
+                        temp_game.logic.board, GameState.PLAYER1, 1, self.difficulty
                     )
 
         # sift through board, find minimum score and return the move
@@ -82,3 +86,11 @@ class AI_Easy(AI):
                 return min(minimax_values)
             else:
                 return max(minimax_values)
+            
+    def heuristic(self, board: Board):
+        """Given a board, calculate the heuristic score assuming the player is white (player 1)"""     
+        tile_score = board.get_score()
+        # white score - black score
+        heuristic_result = tile_score[0] - tile_score[1]
+
+        return heuristic_result
