@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { GamePiece } from "./GamePiece";
-import { resetBoard } from "../services/backendservice";
+import { resetBoard } from "../services/backendservicews";
 import { GameData } from "../types/GameData";
 import Modal from "./Modal";
 import { GameState } from "../types/Enums";

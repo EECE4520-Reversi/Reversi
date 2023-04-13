@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser, registerUser } from "../services/backendservice";
+import { loginUser, registerUser } from "../services/backendservicews";
 import { UserData } from "../types/UserData";
 
 const Login = ({ setUserData }: { setUserData: (data: UserData) => void }) => {

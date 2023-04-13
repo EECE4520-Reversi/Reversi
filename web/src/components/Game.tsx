@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Board from "./Board";
 import NewGame from "./NewGame";
-import { createGame, fetchBoard } from "../services/backendservice";
+import { createGame, fetchBoard } from "../services/backendservicews";
 import { useSearchParams } from "react-router-dom";
 import { GameData } from "../types/GameData";
 import { UserData } from "../types/UserData";

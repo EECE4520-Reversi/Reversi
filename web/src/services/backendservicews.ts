@@ -4,7 +4,9 @@ import { UserData } from "../types/UserData";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 
-const client = new WebSocketClient(`${API_BASE}/ws`);
+//const client = new WebSocketClient(`${API_BASE}/ws`);
+const client = new WebSocketClient(`ws://localhost:5173`);
+console.log(client)
 const connectionID = client.getConnectionId();
 
 export const fetchBoard = async (boardId: string) => {

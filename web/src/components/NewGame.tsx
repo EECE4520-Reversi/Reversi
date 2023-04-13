@@ -1,12 +1,12 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { createGame } from "../services/backendservice";
+import { createGame } from "../services/backendservicews";
 import { Difficulty, GameType } from "../types/Enums";
 import { GameData } from "../types/GameData";
 import Modal from "./Modal";
 
 const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-  }
+}
 
 const NewGame = ({
   setGameData,
@@ -73,19 +73,19 @@ const NewGame = ({
         <div className="flex justify-between space-x-5">
           {[GameType.LOCAL, GameType.AI, GameType.ONLINE].map((val) => {
             return <div className="flex items-center" onClick={() => setGameMode(val)}>
-            <input
-              defaultChecked={gamemode === val}
-              id={`gamemode-radio-${val}`}
-              type="radio"
-              name="gamemode-radio"
-              className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
-            />
-            <label htmlFor={`gamemode-radio-${val}`} className="font-medium">
-            {capitalize(GameType[val])}
-            </label>
-          </div>
+              <input
+                defaultChecked={gamemode === val}
+                id={`gamemode-radio-${val}`}
+                type="radio"
+                name="gamemode-radio"
+                className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
+              />
+              <label htmlFor={`gamemode-radio-${val}`} className="font-medium">
+                {capitalize(GameType[val])}
+              </label>
+            </div>
           })}
-          
+
 
         </div>
       </div>

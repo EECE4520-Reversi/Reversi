@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { makeMove } from "../services/backendservice";
+import { makeMove } from "../services/backendservicews";
 import { GameState, GameType, TileState } from "../types/Enums";
 import { GameData } from "../types/GameData";
 

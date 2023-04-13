@@ -22,7 +22,7 @@ app.add_middleware(
 config = Config(
     app=app,
     host="0.0.0.0",
-    port=os.getenv("PORT") or 3000,
+    port=os.getenv("PORT") or 5173,
 )
 
 # list of active connections to front end
@@ -30,7 +30,7 @@ active_connections = {}
 
 
 # entry point for WebSocket connections
-@app.websocket("/ws/")
+@app.websocket("/")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket_handler(websocket)
 
