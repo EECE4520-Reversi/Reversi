@@ -20,12 +20,16 @@ const Nav = ({
   };
 
   return (
-    <div className="flex justify-end">
+    <div className="flex justify-between">
+
+      <div className="flex gap-3">
+        <button className="btn-primary" onClick={() => navigate("/")}>Home</button>
+        <button className="btn-primary" onClick={() => navigate("/leaderboard")}>Leaderboard</button>
+      </div>
+
+      <div className="justify-end">
       <div>
-        <button
-          className="bg-transparent mr-5 hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-          onClick={loginOrOut}
-        >
+        <button className="btn-primary" onClick={loginOrOut}>
           {userData ? "Logout" : "Login"}
         </button>
       </div>
@@ -35,6 +39,7 @@ const Nav = ({
           {userData?.username} ({userData?.elo} ELO)
         </h1>
       )}
+      </div>
     </div>
   );
 };

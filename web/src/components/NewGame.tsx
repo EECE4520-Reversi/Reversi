@@ -6,7 +6,7 @@ import Modal from "./Modal";
 
 const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-  }
+};
 
 const NewGame = ({
   setGameData,
@@ -45,48 +45,55 @@ const NewGame = ({
       <div className="mt-3">
         <h2 className="inline p-2 text-xl">Difficulty:</h2>
         <div className="flex justify-between space-x-5">
-          {[Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD].map(
-            (val) => {
-              return (
-                <div
-                  className="flex items-center"
-                  onClick={() => setDifficulty(val)}
+          {[Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD].map((val) => {
+            return (
+              <div
+                className="flex items-center"
+                onClick={() => setDifficulty(val)}
+              >
+                <input
+                  defaultChecked={difficulty === val}
+                  id={`difficulty-radio-${val}`}
+                  type="radio"
+                  name="difficult-radio"
+                  className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
+                />
+                <label
+                  htmlFor={`difficulty-radio-${val}`}
+                  className="font-medium"
                 >
-                  <input
-                    defaultChecked={difficulty === val}
-                    id={`difficulty-radio-${val}`}
-                    type="radio"
-                    name="difficult-radio"
-                    className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
-                  />
-                  <label htmlFor={`difficulty-radio-${val}`} className="font-medium">
-                    {capitalize(Difficulty[val])}
-                  </label>
-                </div>
-              );
-            }
-          )}
+                  {capitalize(Difficulty[val])}
+                </label>
+              </div>
+            );
+          })}
         </div>
       </div>
       <div className="mt-3">
         <h2 className="inline p-2 text-xl">Gamemode:</h2>
         <div className="flex justify-between space-x-5">
           {[GameType.LOCAL, GameType.AI, GameType.ONLINE].map((val) => {
-            return <div className="flex items-center" onClick={() => setGameMode(val)}>
-            <input
-              defaultChecked={gamemode === val}
-              id={`gamemode-radio-${val}`}
-              type="radio"
-              name="gamemode-radio"
-              className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
-            />
-            <label htmlFor={`gamemode-radio-${val}`} className="font-medium">
-            {capitalize(GameType[val])}
-            </label>
-          </div>
+            return (
+              <div
+                className="flex items-center"
+                onClick={() => setGameMode(val)}
+              >
+                <input
+                  defaultChecked={gamemode === val}
+                  id={`gamemode-radio-${val}`}
+                  type="radio"
+                  name="gamemode-radio"
+                  className="w-4 h-4 focus:ring-gray-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
+                />
+                <label
+                  htmlFor={`gamemode-radio-${val}`}
+                  className="font-medium"
+                >
+                  {capitalize(GameType[val])}
+                </label>
+              </div>
+            );
           })}
-          
-
         </div>
       </div>
     </div>
