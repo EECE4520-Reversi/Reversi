@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Set
 
 from dao.gamedao import GameDao
 from dao.userdao import UserDao
@@ -33,6 +33,7 @@ class GameController:
 
     def __init__(self) -> None:
         self.games: Dict[str, Game] = {}
+        self.online_players: Dict[str, str] = {}  # TODO: Change from just names?
         for db_game in GameDao().fetch_games():
             game = Game.from_dict(db_game)
             self.games[game.board_id] = game
@@ -189,16 +190,18 @@ class GameController:
             "type": self.games[board_id].game_type,
         }
 
-    def register_user(self, username, password):
+    def register_user(self, sid: str, username: str, password: str):
+        self.online_players[sid] = username
         return (
             UserDao()
             .save_user(User(username, hashlib.sha256(password.encode()).hexdigest()))
             .to_dict()
         )
 
-    def login_user(self, username, password):
+    def login_user(self, sid: str, username: str, password: str):
         existingUser = User.from_dict(UserDao().fetch_specific_user(username))
         if existingUser.password == hashlib.sha256(password.encode()).hexdigest():
+            self.online_players[sid] = username
             return existingUser.to_dict()
 
     def user_exists(self, username):

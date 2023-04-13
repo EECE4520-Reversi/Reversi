@@ -1,88 +1,100 @@
 import asyncio
 import os
 
+from fastapi_socketio import SocketManager
+
 from controller.controller import GameController
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-from uvicorn import Config, Server
+from fastapi import FastAPI, HTTPException
 
 load_dotenv()
 app = FastAPI()
 controller = GameController()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-config = Config(
-    app=app,
-    host="0.0.0.0",
-    port=os.getenv("PORT") or 3000,
-)
+socket_manager = SocketManager(app, cors_allowed_origins="*", mount_location="/")
 
 
-@app.get("/board/{board_id}")
-async def board(board_id: str):
+@socket_manager.on("connect")
+async def connect(sid, data):
+    print(f"Client connected with session id: {sid}")
+    await socket_manager.emit("players", list(controller.online_players.values()))
+
+
+@socket_manager.on("disconnect")
+async def disconnect(sid):
+    controller.online_players.pop(sid, None)
+    await socket_manager.emit("players", list(controller.online_players.values()))
+
+
+@socket_manager.on("getBoard")
+async def get_board(sid: str, board_id: str):
     if not controller.game_exists(board_id):
         raise HTTPException(404)
     return controller.get_data(board_id)
 
 
-@app.delete("/board/{board_id}")
-async def reset(board_id: str):
-    if not controller.game_exists(board_id):
-        raise HTTPException(404)
-    controller.reset_game(board_id)
-    return controller.get_data(board_id)
-
-
-@app.post("/board/{board_id}")
-async def make_move(request: Request, board_id: str):
+@socket_manager.on("makeMove")
+async def make_move(sid: str, board_id: str, idx: int):
     if not controller.game_exists(board_id):
         raise HTTPException(404)
 
     if not controller.players_turn(board_id):
         raise HTTPException(403)
 
-    data = await request.json()
-    idx = data["idx"]
     x, y = controller.convert_index_to_xy(board_id, idx)
 
     print(f"Clicked ({x}, {y})")
     if not controller.is_move_valid(board_id, x, y):
         raise HTTPException(400)
 
-    return controller.send_move(board_id, x, y)
+    datas = controller.send_move(board_id, x, y)
+    await socket_manager.emit("board", datas[0])
+
+    # The AI delay
+    await asyncio.sleep(1)
+    await socket_manager.emit("board", datas[1])
 
 
-@app.post("/create")
-async def create_game(request: Request):
-    data = await request.json()
-    return controller.new_game(
-        data.get("size"), data.get("difficulty"), data.get("gamemode")
-    )
+@socket_manager.on("resetBoard")
+async def reset(sid: str, board_id: str):
+    if not controller.game_exists(board_id):
+        raise HTTPException(404)
+    controller.reset_game(board_id)
+    await socket_manager.emit("board", controller.get_data(board_id))
 
 
-@app.post("/register")
-async def register_user(request: Request):
-    data = await request.json()
-    if not controller.user_exists(data.get("username")):
-        return controller.register_user(data.get("username"), data.get("password"))
+@socket_manager.on("createGame")
+async def create_game(sid: str, size: int, difficult: int, gamemode: int):
+    data = controller.new_game(size, difficult, gamemode)
+    await socket_manager.emit("board", data)
+
+
+@socket_manager.on("register")
+async def register_user(sid: str, username: str, password: str):
+    if not controller.user_exists(username):
+        data = controller.register_user(sid, username, password)
+        if data:
+            await socket_manager.emit("players", list(controller.online_players.values()))
+            return data
     raise HTTPException(403, "User with that name already exists")
 
 
-@app.post("/login")
-async def login_user(request: Request):
-    data = await request.json()
-    if controller.user_exists(data.get("username")):
-        return controller.login_user(data.get("username"), data.get("password"))
+@socket_manager.on("login")
+async def login_user(sid: str, username: str, password: str):
+    if controller.user_exists(username):
+        # If it returns data, logic was successful, emit new player list
+        data = controller.login_user(sid, username, password)
+        if data:
+            await socket_manager.emit("players", list(list(controller.online_players.values())))
+            return data
+
     raise HTTPException(403, "Invalid credentials")
 
+@socket_manager.on("logout")
+async def logout_user(sid: str):
+    controller.online_players.pop(sid, None)
+    await socket_manager.emit("players", list(list(controller.online_players.values())))
 
-server = Server(config)
-asyncio.run(server.serve())
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=3000)
