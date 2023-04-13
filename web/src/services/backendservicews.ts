@@ -4,8 +4,8 @@ import { UserData } from "../types/UserData";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 
-//const client = new WebSocketClient(`${API_BASE}/ws`);
-const client = new WebSocketClient(`ws://localhost:5173`);
+const client = new WebSocketClient(`${API_BASE}/ws`);
+//const client = new WebSocketClient(`ws://localhost:3000/ws`);
 console.log(client)
 const connectionID = client.getConnectionId();
 
@@ -14,6 +14,8 @@ export const fetchBoard = async (boardId: string) => {
     const data: GameData = resp;
     return data;
 };
+
+fetchBoard("65")
 
 export const makeMove = async (idx: number, boardId: string) => {
     const resp = await client.send(connectionID, "makeMove", idx, boardId);

@@ -30,7 +30,7 @@ export class WebSocketClient {
     private async connect() {
         const connected = new Promise((resolve) => {
             this.socket.onopen = () => {
-                resolve(this.socket.OPEN);
+                resolve(true);
             };
         });
         await connected;
@@ -50,6 +50,8 @@ export class WebSocketClient {
         };
 
         if (this.socket.readyState === WebSocket.OPEN) {
+            this.socket.send(JSON.stringify(message));
+
             const response = new Promise((resolve) => {
                 this.socket.onmessage = (event) => {
                     const data = JSON.parse(event.data);
@@ -59,8 +61,8 @@ export class WebSocketClient {
                 };
             });
 
-            this.socket.send(JSON.stringify(message));
             return response;
+
         } else {
             this.messageQueue.push({
                 connection_id: connectionID,
