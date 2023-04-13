@@ -59,11 +59,12 @@ async def websocket_handler(websocket: WebSocket):
 async def handle_function_call(function_name: str, *args):
     # Map function names to functions
     function_map = {
-        """ example format
-        "add": add_function,
-        "multiply": multiply_function
-        """
-        "fetchBoard": fetchBoard_function
+        "fetchBoard": fetchBoard_function,
+        "makeMove": makeMove_function,
+        "resetBoard": resetBoard_function,
+        "createGame": createGame_function,
+        "registerUser": registerUser_function,
+        "loginUser": loginUser_function,
     }
     # Call the appropriate function and return the result
     if function_name in function_map:
@@ -74,15 +75,6 @@ async def handle_function_call(function_name: str, *args):
             return None
     else:
         return None
-
-
-"""example
-async def add_function(a: int, b: int) -> int:
-    return a + b    
-
-async def multiply_function(a: int, b: int) -> int:
-    return a * b
-"""
 
 
 async def fetchBoard_function(board_id: str):
