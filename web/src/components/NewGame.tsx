@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { createGame } from "../services/backendservice";
 import { Difficulty, GameType } from "../types/Enums";
 import { GameData } from "../types/GameData";
 import Modal from "./Modal";
+import socket from "../services/websocket";
 
 const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -25,10 +25,7 @@ const NewGame = ({
   );
 
   const onSubmit = () => {
-    createGame(boardSize, difficulty, gamemode).then((gameData) => {
-      setGameData(gameData);
-      setVisible(false);
-    });
+    socket.emit("createGame", boardSize, difficulty, gamemode)
   };
 
   const newGameComponents = (
@@ -94,6 +91,8 @@ const NewGame = ({
               </div>
             );
           })}
+          
+
         </div>
       </div>
     </div>

@@ -1,10 +1,12 @@
 from typing import List
+from copy import deepcopy
 
 from model.enums import TileState
 from model.tile import Tile
+from model.prototype import Prototype
 
 
-class Board:
+class Board(Prototype):
     """A class to represent a game's board state
 
     ...
@@ -179,3 +181,6 @@ class Board:
                 for row in data.get("matrix")
             ],
         )
+
+    def clone(self):
+        return deepcopy(self)

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { UserData } from "../types/UserData";
+import socket from "../services/websocket";
 
 const Nav = ({
   userData,
@@ -15,7 +16,7 @@ const Nav = ({
       navigate("/login");
       return;
     }
-
+    socket.emit('logout')
     setUserData(undefined);
   };
 

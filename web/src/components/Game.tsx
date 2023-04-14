@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Board from "./Board";
 import NewGame from "./NewGame";
-import { createGame, fetchBoard } from "../services/backendservice";
+import socket from "../services/websocket";
 import { useSearchParams } from "react-router-dom";
 import { GameData } from "../types/GameData";
 import { UserData } from "../types/UserData";
@@ -22,19 +22,16 @@ const Game = ({
   const [gameData, setGameData] = useState<GameData>();
 
   useEffect(() => {
-    fetchBoard(boardId)
-      .then((gameData) => {
-        setGameData(gameData);
-      })
-      .catch(() => {
-        createGame(8, Difficulty.MEDIUM, GameType.AI).then((gameData) => {
-          console.log(gameData);
-          setBoardId(gameData.id);
-          setGameData(gameData);
-        });
-      });
-  }, []);
+    socket.emit("getBoard", boardId, (data: GameData) => {
+      setGameData(data);
+    })
 
+    socket.on("board", (data: GameData) => {
+      if (data.id != boardId) return;
+      setGameData(data);
+    })
+  }, []);
+  
   useEffect(() => {
     const params = new URLSearchParams();
     params.append("id", boardId);

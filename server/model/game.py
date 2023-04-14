@@ -192,7 +192,7 @@ class Game:
                     # create a temporary game to calculate moves made on this tile
                     temp_game = Game(size=board.size)
                     temp_game.logic.current_player = GameState.PLAYER2
-                    temp_game.logic.board = copy.deepcopy(board)
+                    temp_game.logic.board = self.logic.board.clone()
 
                     # take the next turn with the current valid tile
                     temp_game.take_turn(tile.x, tile.y)

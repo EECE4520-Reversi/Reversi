@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { makeMove } from "../services/backendservice";
 import { GameState, GameType, TileState } from "../types/Enums";
 import { GameData } from "../types/GameData";
+import socket from "../services/websocket";
 
 export const GamePiece = ({
   state,
@@ -35,12 +35,7 @@ export const GamePiece = ({
   const onClick = async () => {
     if (state !== TileState.VIABLE) return;
 
-    const data = await makeMove(idx, gameData.id);
-    updateBoard(data[0]);
-    if (data.length > 1) {
-      await delay(1000);
-      updateBoard(data[1]);
-    }
+    socket.emit("makeMove", gameData.id, idx)
   };
 
   useEffect(() => {

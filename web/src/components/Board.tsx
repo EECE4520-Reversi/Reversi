@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { GamePiece } from "./GamePiece";
-import { resetBoard } from "../services/backendservice";
 import { GameData } from "../types/GameData";
 import Modal from "./Modal";
 import { GameState } from "../types/Enums";
+import socket from "../services/websocket";
 
 type Color = { value: string; name: string };
 const colors = [
@@ -37,7 +37,7 @@ const Board = ({
   };
 
   const emptyBoard = () => {
-    resetBoard(gameData.id).then(setGameData);
+    socket.emit("resetBoard", gameData.id)
   };
 
   useEffect(() => {
