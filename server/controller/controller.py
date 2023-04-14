@@ -38,7 +38,7 @@ class GameController:
             game = Game.from_dict(db_game)
             self.games[game.board_id] = game
 
-    def new_game(self, size: int, difficult: int, game_type: int):
+    def new_game(self, size: int, difficult: int, game_type: int, players: List[str]):
         """Creates a new game using the given settings
 
         Args:
@@ -48,16 +48,20 @@ class GameController:
         """
         board_id = str(len(self.games.keys()) + 1)
         self.games[board_id] = Game(
-            board_id=board_id, size=size, search_depth=difficult, game_type=game_type
+            board_id=board_id,
+            size=size,
+            search_depth=difficult,
+            game_type=game_type,
+            players=players,
         )
         GameDao().save_game(self.games[board_id])
-        return self.get_data(board_id)
+        return board_id
 
     # checks if the given game exists
     def game_exists(self, board_id: str):
         return board_id in self.games
 
-    def players_turn(self, board_id):
+    def players_turn(self, board_id: str, username: str):
         """Verify its player one's turn
 
         Returns:
@@ -65,9 +69,16 @@ class GameController:
         """
 
         # Its the players turn if its local play, or actually their turn
+        game = self.games[board_id]
         return (
-            self.games[board_id].game_type == GameType.LOCAL
-            or self.games[board_id].current_turn == GameState.PLAYER1
+            game.game_type == GameType.LOCAL
+            or (
+                game.game_type == GameType.AI and game.current_turn == GameState.PLAYER1
+            )
+            or (
+                game.game_type == GameType.ONLINE
+                and game.players[game.current_turn - 1] == username
+            )
         )
 
     def is_move_valid(self, board_id: str, x: int, y: int):
@@ -115,6 +126,10 @@ class GameController:
             list[int]: List of target game's tile states
         """
         return self.games[board_id].get_board_data()
+
+    def add_player(self, board_id: str, username: str):
+        self.games[board_id].players.append(username)
+        GameDao().save_game(self.games[board_id])
 
     def get_state(self, board_id: str) -> int:
         """Returns whose turn it is on the target game
@@ -206,3 +221,10 @@ class GameController:
 
     def user_exists(self, username):
         return UserDao().fetch_specific_user(username)
+
+    def joinable_games(self):
+        return [
+            {"id": board_id, "player": game.players[0], "size": game.size}
+            for board_id, game in self.games.items()
+            if len(game.players) == 1 and game.game_type == GameType.ONLINE
+        ]

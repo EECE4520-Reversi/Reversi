@@ -7,14 +7,12 @@ export const GamePiece = ({
   state,
   idx,
   gameData,
-  updateBoard,
   player1Color,
   player2Color,
 }: {
   state: TileState;
   idx: number;
   gameData: GameData;
-  updateBoard: (data: GameData) => void;
   player1Color: string;
   player2Color: string;
 }) => {
@@ -35,7 +33,7 @@ export const GamePiece = ({
   const onClick = async () => {
     if (state !== TileState.VIABLE) return;
 
-    socket.emit("makeMove", gameData.id, idx)
+    socket.emit("makeMove", gameData.id, idx);
   };
 
   useEffect(() => {
@@ -58,7 +56,8 @@ export const GamePiece = ({
     style = { backgroundColor: colors[colorState] };
   } else if (
     gameData.type == GameType.LOCAL ||
-    (gameData.type == GameType.AI && gameData.state != GameState.PLAYER2)
+    (gameData.type == GameType.AI && gameData.state != GameState.PLAYER2) ||
+    gameData.type == GameType.ONLINE // TODO: Add condition to show pickable pieces if its our turn currently
   ) {
     // Hide picks if vs AI and its AI turn
     // Pickable piece

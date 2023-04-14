@@ -1,5 +1,6 @@
 import asyncio
 import copy
+from typing import List
 
 from model.board import Board
 from model.enums import TileState, GameType, GameState
@@ -46,6 +47,7 @@ class Game:
         logic: Logic = None,
         running: bool = True,
         winner: int = 0,
+        players: List[str] = None,
     ) -> None:
         """Initialize logic, board, and players
 
@@ -63,7 +65,7 @@ class Game:
         # game_type = 2: AI Game
         # game_type = 3: Online Game
         self.game_type = GameType(game_type)
-        self.lock = asyncio.Lock()
+        self.players = players
 
     def reset(self):
         self.logic = Logic(self.size)
@@ -289,6 +291,7 @@ class Game:
             "size": self.size,
             "difficulty": self.difficulty,
             "game_type": self.game_type,
+            "players": self.players,
         }
 
     @classmethod
@@ -301,5 +304,6 @@ class Game:
             Logic.from_dict(data.get("logic")),
             data.get("running"),
             data.get("winner"),
+            data.get("players"),
         )
         return game

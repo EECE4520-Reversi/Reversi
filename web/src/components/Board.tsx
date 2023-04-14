@@ -5,39 +5,15 @@ import Modal from "./Modal";
 import { GameState } from "../types/Enums";
 import socket from "../services/websocket";
 
-type Color = { value: string; name: string };
-const colors = [
-  { value: "bg-green-700", name: "Green" },
-  { value: "bg-amber-800", name: "Amber" },
-  { value: "bg-[#242424]", name: "Gray" },
-  { value: "bg-white", name: "White" },
-  { value: "bg-black", name: "Black" },
-];
-
-const Board = ({
-  gameData,
-  setGameData,
-}: {
-  gameData: GameData;
-  setGameData: Dispatch<SetStateAction<GameData | undefined>>;
-}) => {
+const Board = ({ gameData }: { gameData: GameData }) => {
   const [gameOverVisible, setGameOverVisible] = useState<boolean>(false);
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
   const [boardColor, setBoardColor] = useState<string>("#18843c");
   const [player1Color, setPlayer1Color] = useState<string>("#ffffff");
   const [player2Color, setPlayer2Color] = useState<string>("#000000");
 
-  console.log(gameData);
-  console.log("Game state: ", gameData.state);
-
-  // Sets the new game data, and then refetches
-  const updateBoard = async (data: GameData) => {
-    console.log(data);
-    setGameData(data);
-  };
-
-  const emptyBoard = () => {
-    socket.emit("resetBoard", gameData.id)
+  const resetBoard = () => {
+    socket.emit("resetBoard", gameData.id);
   };
 
   useEffect(() => {
@@ -83,7 +59,7 @@ const Board = ({
     <div className="p-3">
       <button
         className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-        onClick={emptyBoard}
+        onClick={resetBoard}
       >
         Reset
       </button>
@@ -112,7 +88,6 @@ const Board = ({
                 idx={i}
                 state={e}
                 gameData={gameData}
-                updateBoard={updateBoard}
                 player1Color={player1Color}
                 player2Color={player2Color}
               />

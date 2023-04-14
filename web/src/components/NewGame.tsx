@@ -3,29 +3,41 @@ import { Difficulty, GameType } from "../types/Enums";
 import { GameData } from "../types/GameData";
 import Modal from "./Modal";
 import socket from "../services/websocket";
+import { useNavigate } from "react-router";
 
 const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
 
 const NewGame = ({
-  setGameData,
   gameData,
+  setBoardID,
 }: {
-  setGameData: Dispatch<SetStateAction<GameData | undefined>>;
-  gameData: GameData;
+  gameData: GameData | undefined;
+  setBoardID: Dispatch<SetStateAction<string>>;
 }) => {
   const [visible, setVisible] = useState<boolean>(false);
-  const [boardSize, setBoardSize] = useState<number>(gameData.size || 8);
+  const [boardSize, setBoardSize] = useState<number>(gameData?.size || 8);
   const [difficulty, setDifficulty] = useState<Difficulty>(
     gameData ? gameData.difficulty : Difficulty.MEDIUM
   );
   const [gamemode, setGameMode] = useState<GameType>(
-    gameData.type || GameType.AI
+    gameData?.type || GameType.AI
   );
+  const navigate = useNavigate();
 
   const onSubmit = () => {
-    socket.emit("createGame", boardSize, difficulty, gamemode)
+    socket.emit(
+      "createGame",
+      boardSize,
+      difficulty,
+      gamemode,
+      (boardId: string) => {
+        setBoardID(boardId);
+        console.log(`New Game: ${boardId}`);
+        navigate("/game");
+      }
+    );
   };
 
   const newGameComponents = (
@@ -47,6 +59,7 @@ const NewGame = ({
               <div
                 className="flex items-center"
                 onClick={() => setDifficulty(val)}
+                key={val}
               >
                 <input
                   defaultChecked={difficulty === val}
@@ -74,6 +87,7 @@ const NewGame = ({
               <div
                 className="flex items-center"
                 onClick={() => setGameMode(val)}
+                key={val}
               >
                 <input
                   defaultChecked={gamemode === val}
@@ -91,21 +105,18 @@ const NewGame = ({
               </div>
             );
           })}
-          
-
         </div>
       </div>
     </div>
   );
 
   return (
-    <div>
+    <>
       <button
-        className="bg-pink-500 text-white active:bg-pink-600 px-6 py-3 rounded"
-        type="button"
         onClick={() => setVisible(true)}
+        className="text-4xl w-1/2 btn-primary"
       >
-        New Game
+        Create Game
       </button>
 
       <Modal
@@ -116,7 +127,7 @@ const NewGame = ({
         submitText="Create"
         component={newGameComponents}
       />
-    </div>
+    </>
   );
 };
 

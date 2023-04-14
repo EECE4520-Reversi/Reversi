@@ -16,30 +16,36 @@ const Nav = ({
       navigate("/login");
       return;
     }
-    socket.emit('logout')
+    socket.emit("logout");
     setUserData(undefined);
   };
 
   return (
     <div className="flex justify-between">
-
       <div className="flex gap-3">
-        <button className="btn-primary" onClick={() => navigate("/")}>Home</button>
-        <button className="btn-primary" onClick={() => navigate("/leaderboard")}>Leaderboard</button>
-      </div>
-
-      <div className="justify-end">
-      <div>
-        <button className="btn-primary" onClick={loginOrOut}>
-          {userData ? "Logout" : "Login"}
+        <button className="btn-primary" onClick={() => navigate("/")}>
+          Home
+        </button>
+        <button
+          className="btn-primary"
+          onClick={() => navigate("/leaderboard")}
+        >
+          Leaderboard
         </button>
       </div>
 
-      {userData && (
-        <h1 className="text-3xl">
-          {userData?.username} ({userData?.elo} ELO)
-        </h1>
-      )}
+      <div className="justify-end">
+        <div>
+          <button className="btn-primary" onClick={loginOrOut}>
+            {userData ? "Logout" : "Login"}
+          </button>
+        </div>
+
+        {userData && (
+          <h1 className="text-3xl">
+            {userData?.username} ({userData?.elo} ELO)
+          </h1>
+        )}
       </div>
     </div>
   );
