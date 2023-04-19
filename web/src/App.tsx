@@ -42,13 +42,9 @@ const App = () => {
         />
         <Route
           path="/game"
-<<<<<<< HEAD
           element={
             <Game gameData={gameData} boardID={boardID} userData={userData} />
           }
-=======
-          element={<Game gameData={gameData} boardID={boardID} />}
->>>>>>> 40bf264c4db7b2710872012bc1f659e17a41fd14
         />
         <Route path="/login" element={<Login />} />
       </Routes>

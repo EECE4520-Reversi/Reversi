@@ -6,7 +6,6 @@ import { GameState } from "../types/Enums";
 import socket from "../services/websocket";
 import { UserData } from "../types/UserData";
 
-<<<<<<< HEAD
 const Board = ({
   gameData,
   userData,
@@ -14,9 +13,6 @@ const Board = ({
   gameData: GameData;
   userData: UserData | undefined;
 }) => {
-=======
-const Board = ({ gameData }: { gameData: GameData }) => {
->>>>>>> 40bf264c4db7b2710872012bc1f659e17a41fd14
   const [gameOverVisible, setGameOverVisible] = useState<boolean>(false);
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
   const [boardColor, setBoardColor] = useState<string>("#18843c");
@@ -72,16 +68,6 @@ const Board = ({ gameData }: { gameData: GameData }) => {
 
   return (
     <div className="p-3">
-<<<<<<< HEAD
-=======
-      <button
-        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-        onClick={resetBoard}
-      >
-        Reset
-      </button>
-
->>>>>>> 40bf264c4db7b2710872012bc1f659e17a41fd14
       <button
         className="ml-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
         onClick={() => setSettingsVisible(true)}
@@ -108,10 +94,7 @@ const Board = ({ gameData }: { gameData: GameData }) => {
                 gameData={gameData}
                 player1Color={player1Color}
                 player2Color={player2Color}
-<<<<<<< HEAD
                 userData={userData}
-=======
->>>>>>> 40bf264c4db7b2710872012bc1f659e17a41fd14
               />
             ))}
         </div>
@@ -125,8 +108,8 @@ const Board = ({ gameData }: { gameData: GameData }) => {
         component={
           (gameData.score[0] > gameData.score[1] &&
             gameData.players[0] == userData?.username) ||
-          (gameData.score[0] < gameData.score[1] &&
-            gameData.players[1] == userData?.username)
+            (gameData.score[0] < gameData.score[1] &&
+              gameData.players[1] == userData?.username)
             ? youWin
             : youLose
         }
