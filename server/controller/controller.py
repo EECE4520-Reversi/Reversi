@@ -234,15 +234,20 @@ class GameController:
         Returns:
             dict: key:value holding all critical game information
         """
+
+        game = self.games[board_id]
+
         return {
             "id": board_id,
             "board": self.get_board(board_id),
             "score": self.get_score(board_id),
             "state": self.get_state(board_id),
             "winner": self.get_winner(board_id),
-            "size": self.games[board_id].size,
-            "difficulty": self.games[board_id].difficulty,
-            "type": self.games[board_id].game_type,
+            "size": game.size,
+            "difficulty": game.difficulty,
+            "type": game.game_type,
+            "players": game.players,
+            "currentTurn": game.players[game.current_turn - 1] if len(game.players) > game.current_turn - 1 else None
         }
 
     def register_user(self, sid: str, username: str, password: str):

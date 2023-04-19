@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserData } from "../types/UserData";
 import socket from "../services/websocket";
 
-const Login = ({ setUserData }: { setUserData: (data: UserData) => void }) => {
+const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -15,26 +14,9 @@ const Login = ({ setUserData }: { setUserData: (data: UserData) => void }) => {
   // }, [])
 
   const handleLogin = () => {
-    socket.emit(
-      hasAccount ? "login" : "register",
-      username,
-      password,
-      (data: UserData) => {
-        setUserData(data);
-        navigate("/");
-      }
-    );
-
-    // func(username, password)
-    //   .then((data) => {
-    //     console.log(data);
-    //     setUserData(data);
-    //     navigate("/");
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     setErrorMsg(err.response.data.detail);
-    //   });
+    socket.emit(hasAccount ? "login" : "register", username, password, () => {
+      navigate("/");
+    });
   };
 
   return (

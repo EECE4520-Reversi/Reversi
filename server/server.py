@@ -7,6 +7,8 @@ from controller.controller import GameController
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 
+from model.user import User
+
 load_dotenv()
 app = FastAPI()
 controller = GameController()
@@ -18,6 +20,9 @@ async def connect(sid, data):
     print(f"Client connected with session id: {sid}")
     controller.online_players[sid] = f"Guest#{random.randint(0, 10000)}"
     await socket_manager.emit("players", list(controller.online_players.values()))
+
+    user = User(username=controller.online_players[sid])
+    await socket_manager.emit("userdata", user.to_dict(), to=sid)
 
 
 @socket_manager.on("disconnect")
@@ -86,7 +91,8 @@ async def register_user(sid: str, username: str, password: str):
     if not controller.user_exists(username):
         data = controller.register_user(sid, username, password)
         await socket_manager.emit("players", list(controller.online_players.values()))
-        return data
+        await socket_manager.emit("userdata", data, to=sid)
+        return
 
     # TODO: Show error message in UI, we cant use exceptions
     raise HTTPException(403, "User with that name already exists")
@@ -101,7 +107,8 @@ async def login_user(sid: str, username: str, password: str):
             await socket_manager.emit(
                 "players", list(list(controller.online_players.values()))
             )
-            return data
+            await socket_manager.emit("userdata", data, to=sid)
+            return
 
     # TODO: Show error message in UI, we cant use exceptions
     raise HTTPException(403, "Invalid credentials")

@@ -9,4 +9,6 @@ export type GameData = {
   score: number[];
   difficulty: Difficulty;
   type: GameType;
+  players: string[];
+  currentTurn: string;
 };

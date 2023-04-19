@@ -100,7 +100,6 @@ class Game:
         # end turn
         return True
 
-
     def game_over(self) -> bool:
         """Checks if the game is still running
 
