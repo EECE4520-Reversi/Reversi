@@ -5,6 +5,7 @@ from model.game import Game
 from model.move import Move
 import copy
 
+
 class AI:
     """A class to represent AI agents to play against the user
 
@@ -98,11 +99,10 @@ class AI:
                 return min(minimax_values)
             else:
                 return max(minimax_values)
-            
+
         return self.heuristic(board)
 
     @abstractmethod
     def heuristic(self):
         """Given a board, calculate the heuristic score assuming the player is white (player 1)"""
         pass
-

@@ -2,6 +2,7 @@ from model.logic import Logic
 from model.move import Move
 import unittest
 
+
 class TestLogic(unittest.TestCase):
     def setUp(self) -> None:
         self.logic = Logic(4)
@@ -18,7 +19,7 @@ class TestLogic(unittest.TestCase):
 
     def test_switch_players(self):
         self.assertEqual(self.logic.current_player, 1)
-        
+
         self.logic.switch_players()
         self.assertEqual(self.logic.current_player, 2)
 
@@ -26,14 +27,14 @@ class TestLogic(unittest.TestCase):
         self.assertEqual(self.logic.current_player, 1)
 
     def test_validate_move(self):
-        x = self.logic.validate_move(Move(0,2), 1)
-        self.assertEqual(x, [self.logic.board.get_tile(1,2)])
+        x = self.logic.validate_move(Move(0, 2), 1)
+        self.assertEqual(x, [self.logic.board.get_tile(1, 2)])
 
-        x = self.logic.validate_move(Move(0,0), 1)
+        x = self.logic.validate_move(Move(0, 0), 1)
         self.assertEqual(x, [])
 
-        x = self.logic.validate_move(Move(1,0), 2)
-        self.assertEqual(x, [self.logic.board.get_tile(1,1)])
+        x = self.logic.validate_move(Move(1, 0), 2)
+        self.assertEqual(x, [self.logic.board.get_tile(1, 1)])
 
     def test_find_valid_moves(self):
         self.assertEqual(self.logic2.find_valid_moves(True), [])
@@ -50,15 +51,7 @@ class TestLogic(unittest.TestCase):
         self.assertEqual(self.logic.board.matrix[3][2].player, 3)
 
     def test_calculate_move(self):
-        self.assertEqual(self.logic.calculate_move(Move(0,0)), False)
-        self.assertEqual(self.logic.calculate_move(Move(1,1)), False)
-        self.assertEqual(self.logic.calculate_move(Move(1,2)), False)
-        self.assertEqual(self.logic.calculate_move(Move(0,2)), True)
-
-    
-
-
-
-        
-
-
+        self.assertEqual(self.logic.calculate_move(Move(0, 0)), False)
+        self.assertEqual(self.logic.calculate_move(Move(1, 1)), False)
+        self.assertEqual(self.logic.calculate_move(Move(1, 2)), False)
+        self.assertEqual(self.logic.calculate_move(Move(0, 2)), True)

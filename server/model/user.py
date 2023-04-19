@@ -28,4 +28,3 @@ class User:
             data.get("elo"),
         )
         return user
-

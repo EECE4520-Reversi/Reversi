@@ -19,6 +19,7 @@ class GameType(IntEnum):
     AI = 2
     ONLINE = 3
 
+
 class Difficulty(IntEnum):
     EASY = 0
     MEDIUM = 1

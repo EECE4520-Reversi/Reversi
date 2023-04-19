@@ -211,9 +211,13 @@ class GameController:
 
             score = self.games[board_id].get_score()
             if wint == 1:
-                self.games[board_id].calculate_elos(player1, player2, score[0] - score[1])
+                self.games[board_id].calculate_elos(
+                    player1, player2, score[0] - score[1]
+                )
             elif wint == 2:
-                self.games[board_id].calculate_elos(player2, player1, score[1] - score[0])
+                self.games[board_id].calculate_elos(
+                    player2, player1, score[1] - score[0]
+                )
         return wint
 
     def get_leaderboard(self):
