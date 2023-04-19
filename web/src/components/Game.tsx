@@ -8,11 +8,11 @@ import { GameState } from "../types/Enums";
 const Game = ({
   gameData,
   boardID,
-  playerNum
+  userData,
 }: {
   gameData: GameData | undefined;
   boardID: string;
-  playerNum: GameState
+  userData: UserData | undefined;
 }) => {
   useEffect(() => {
     socket.emit("updateBoard", boardID);
@@ -27,7 +27,7 @@ const Game = ({
         </h1>
         {gameData && (
           <>
-            <Board gameData={gameData} playerNum={playerNum}/>
+            <Board gameData={gameData} userData={userData} />
           </>
         )}
       </div>

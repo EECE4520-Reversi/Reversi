@@ -34,14 +34,14 @@ const Nav = ({
         </button>
       </div>
 
-      <div className="justify-end">
+      <div className="flex justify-end items-center gap-3">
         <div>
           <button className="btn-primary" onClick={loginOrOut}>
-            {userData ? "Logout" : "Login"}
+            {userData?.password ? "Logout" : "Login"}
           </button>
         </div>
 
-        {userData && (
+        {userData?.password && (
           <h1 className="text-3xl">
             {userData?.username} ({userData?.elo} ELO)
           </h1>

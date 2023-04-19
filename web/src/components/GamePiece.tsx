@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { GameState, GameType, TileState } from "../types/Enums";
 import { GameData } from "../types/GameData";
 import socket from "../services/websocket";
+import { UserData } from "../types/UserData";
 
 export const GamePiece = ({
   state,
@@ -9,14 +10,14 @@ export const GamePiece = ({
   gameData,
   player1Color,
   player2Color,
-  playerNum,
+  userData,
 }: {
   state: TileState;
   idx: number;
   gameData: GameData;
   player1Color: string;
   player2Color: string;
-  playerNum: GameState
+  userData: UserData | undefined;
 }) => {
   /*
     #   0 if empty
@@ -57,7 +58,8 @@ export const GamePiece = ({
   } else if (
     gameData.type == GameType.LOCAL ||
     (gameData.type == GameType.AI && gameData.state != GameState.PLAYER2) ||
-    gameData.type == GameType.ONLINE && playerNum == gameData.state
+    (gameData.type == GameType.ONLINE &&
+      userData?.username === gameData.currentTurn)
   ) {
     // Hide picks if vs AI and its AI turn
     // Pickable piece
