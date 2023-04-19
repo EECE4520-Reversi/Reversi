@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { Difficulty, GameType } from "../types/Enums";
+import { Difficulty, GameState, GameType } from "../types/Enums";
 import { GameData } from "../types/GameData";
 import Modal from "./Modal";
 import socket from "../services/websocket";
@@ -12,9 +12,11 @@ const capitalize = (str: string) => {
 const NewGame = ({
   gameData,
   setBoardID,
+  setPlayerNum
 }: {
   gameData: GameData | undefined;
   setBoardID: Dispatch<SetStateAction<string>>;
+  setPlayerNum: Dispatch<SetStateAction<GameState>>;
 }) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [boardSize, setBoardSize] = useState<number>(gameData?.size || 8);
@@ -35,6 +37,7 @@ const NewGame = ({
       (boardId: string) => {
         setBoardID(boardId);
         console.log(`New Game: ${boardId}`);
+        setPlayerNum(1);
         navigate("/game");
       }
     );
