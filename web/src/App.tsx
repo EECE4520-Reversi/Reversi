@@ -9,6 +9,7 @@ import Home from "./components/Home";
 import Nav from "./components/Nav";
 import CustomParticles from "./components/Particles";
 import { GameData } from "./types/GameData";
+import Leaderboard from "./components/Leaderboard";
 
 const App = () => {
   const [userData, setUserData] = useState<UserData | undefined>();
@@ -47,6 +48,7 @@ const App = () => {
           }
         />
         <Route path="/login" element={<Login />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
     </>
   );

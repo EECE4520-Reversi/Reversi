@@ -2,6 +2,7 @@ from model.board import Board
 from model.enums import TileState, GameState
 from model.game import Game
 from model.move import Move
+import copy
 
 
 class AI:
@@ -49,7 +50,7 @@ class AI:
                         temp_game.logic.board, GameState.PLAYER1, 1, search_depth
                     )
 
-        move = None
+        # sift through board, find minimum score and return the move
         min_score = 9999
         for row in board.matrix:
             for tile in row:
@@ -100,20 +101,15 @@ class AI:
 
             # find the current player based on search depth
             # take the min minimax value if it is AI turn or max value if it is the player
+            # TODO: min/max raises if it has an empty sequence
             if current_depth % 2 == 0:
                 return min(minimax_values)
             else:
                 return max(minimax_values)
 
-        # if we have reached the end of the search depth, return the heuristic value
-        else:
-            return self.heuristic(board)
+        return self.heuristic(board)
 
-    @staticmethod
-    def heuristic(board: Board):
-        """Given a board, calculate the heuristic score assuming the player is white"""
-        tile_score = board.get_score()
-        # white score - black score
-        heuristic_result = tile_score[0] - tile_score[1]
-
-        return heuristic_result
+    @abstractmethod
+    def heuristic(self):
+        """Given a board, calculate the heuristic score assuming the player is white (player 1)"""
+        pass

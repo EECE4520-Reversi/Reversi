@@ -27,8 +27,16 @@ const Board = ({
 
   useEffect(() => {
     setGameOverVisible(gameData.state === GameState.GAMEOVER);
-    setYourScore(gameData.players[0] === userData?.username ? gameData.score[0] : gameData.score[1]);
-    setOpponentScore(gameData.players[1] === userData?.username ? gameData.score[0] : gameData.score[1]);
+    setYourScore(
+      gameData.players[0] === userData?.username
+        ? gameData.score[0]
+        : gameData.score[1]
+    );
+    setOpponentScore(
+      gameData.players[1] === userData?.username
+        ? gameData.score[0]
+        : gameData.score[1]
+    );
   }, [gameData]);
 
   const youWin = <h1 className="text-xl">You Win!</h1>;

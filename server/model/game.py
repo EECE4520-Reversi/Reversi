@@ -2,10 +2,12 @@ import asyncio
 import copy
 from typing import List
 
+from dao.userdao import UserDao
 from model.board import Board
 from model.enums import TileState, GameType, GameState
 from model.logic import Logic
 from model.move import Move
+from model.user import User
 
 
 class Game:
@@ -65,7 +67,7 @@ class Game:
         # game_type = 2: AI Game
         # game_type = 3: Online Game
         self.game_type = GameType(game_type)
-        self.players = players
+        self.players = players or []
 
     def reset(self):
         self.logic = Logic(self.size)
@@ -80,7 +82,7 @@ class Game:
             y (int): y-position of given move
 
         Returns:
-            bool: True if move was successful. False on error.
+            bool: True if game is not over after the move
         """
         # print(f"Making move at [{x}, {y}]")
         # pass Move to logic for calculating and updating
@@ -93,8 +95,11 @@ class Game:
 
         # check if game is over
         if self.game_over():
-            # get winner and end turn
+
             self.winner = self.end_game()
+            self.calculate_elos(self.winner)
+
+            # get winner and end turn
             return False
 
         # end turn
@@ -119,8 +124,11 @@ class Game:
 
         # check if game is over
         if self.game_over():
-            # get winner and end turn
+
             self.winner = self.end_game()
+            self.calculate_elos(self.winner)
+
+            # get winner and end turn
             return False
 
         # end turn
@@ -185,93 +193,34 @@ class Game:
         else:
             return 0
 
-    def minimax_decision(self, board: Board, search_depth: int = 3) -> Move:
-        """ "Given a board, assuming it is player 2's turn,
-        returns the move that is best to take for player 2"""
-        for row in board.matrix:
-            for tile in row:
-                if tile.player == TileState.VIABLE:
-                    # create a temporary game to calculate moves made on this tile
-                    temp_game = Game(size=board.size)
-                    temp_game.logic.current_player = GameState.PLAYER2
-                    temp_game.logic.board = self.logic.board.clone()
+    def calculate_elos(self, winner_num: int):
 
-                    # take the next turn with the current valid tile
-                    temp_game.take_turn(tile.x, tile.y)
-                    tile.minimax_score = self.minimax(
-                        temp_game.logic.board, GameState.PLAYER1, 1, search_depth
-                    )
+        p1_user = UserDao().fetch_specific_user(self.players[0])
+        p2_user = UserDao().fetch_specific_user(self.players[1])
+        if p1_user and p2_user:
+            player1 = User.from_dict(p1_user)
+            player2 = User.from_dict(p2_user)
 
-        # sift through board, find minimum score and return the move
-        move = None
-        min_score = 9999
-        for row in board.matrix:
-            for tile in row:
-                if tile.player == TileState.VIABLE:
-                    if tile.minimax_score < min_score:
-                        min_score = tile.minimax_score
-                        move = Move(tile.x, tile.y)
-
-        return move
-
-    def minimax(
-        self, board: Board, board_state: int, current_depth: int, search_depth: int
-    ) -> int:
-        """Given a board, board state, the current depth of the algorithm
-        Returns the best minimax score of the valid moves"""
-        if board_state != GameState.GAMEOVER and current_depth <= search_depth:
-            # for each valid move, calculate its minimax value
-            minimax_values = []
-            for row in board.matrix:
-                for tile in row:
-                    if tile.player == TileState.VIABLE:
-                        # create a temporary game to calculate moves made on this tile
-                        temp_game = Game(size=board.size)
-                        temp_game.logic.current_player = board_state
-                        temp_game.logic.board = copy.deepcopy(board)
-
-                        # take the next turn with the current valid tile
-                        temp_game.take_turn(tile.x, tile.y)
-
-                        # find the state of the new board after the turn
-                        """1: Player 1's turn (black)
-                           2: Player 2's turn (white)
-                           3: Game over"""
-                        if temp_game.logic.game_over():
-                            next_state = GameState.GAMEOVER
-                        else:
-                            next_state = temp_game.logic.current_player
-
-                        # call minimax
-                        minimax_values.append(
-                            self.minimax(
-                                temp_game.logic.board,
-                                next_state,
-                                current_depth + 1,
-                                search_depth,
-                            )
-                        )
-
-            # take the min minimax value if it is AI turn or max value if it is the player
-            # TODO: min/max raises if it has an empty sequence
-            if not minimax_values:
-                return self.heuristic(board)
-            elif current_depth % 2 == 0:
-                return min(minimax_values)
+            score = self.get_score()
+            if winner_num == 1:
+                winner = player1
+                loser = player2
+                score_diff = score[0] - score[1]
+            elif winner_num == 2:
+                winner = player2
+                loser = player1
+                score_diff = score[1] - score[0]
             else:
-                return max(minimax_values)
+                return
 
-        # if we have reached the end of the search depth, return the heuristic value
-        else:
-            return self.heuristic(board)
-
-    def heuristic(self, board: Board):
-        """Given a board, calculate the heuristic score assuming the player is white"""
-        tile_score = board.get_score()
-        # white score - black score
-        heuristic_result = tile_score[0] - tile_score[1]
-
-        return heuristic_result
+            default_elo_change = 30
+            elo_diff_factor = (loser.get_elo() - winner.get_elo()) // 50
+            score_diff_factor = score_diff // 20
+            scaled_elo_change = default_elo_change + elo_diff_factor + score_diff_factor
+            winner.gain_elo(scaled_elo_change)
+            loser.lose_elo(scaled_elo_change)
+            UserDao().save_user(winner)
+            UserDao().save_user(loser)
 
     @property
     def current_turn(self) -> GameState:

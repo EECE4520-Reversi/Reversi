@@ -131,6 +131,12 @@ async def joinable_games():
 async def loadable_games(sid: str):
     return controller.loadable_games(sid)
 
+@socket_manager.on("getLeaderboard")
+async def get_leaderboard(sid: str):
+    data = [User.from_dict(data).to_dict() for data in controller.get_leaderboard()]
+    await socket_manager.emit("leaderboard", data, to=sid)
+
+
 if __name__ == "__main__":
     import uvicorn
 

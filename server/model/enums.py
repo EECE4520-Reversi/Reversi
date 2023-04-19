@@ -18,3 +18,9 @@ class GameType(IntEnum):
     LOCAL = 1
     AI = 2
     ONLINE = 3
+
+
+class Difficulty(IntEnum):
+    EASY = 0
+    MEDIUM = 1
+    HARD = 2
