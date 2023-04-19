@@ -1,5 +1,6 @@
 import asyncio
 import copy
+from typing import List
 
 from model.board import Board
 from model.enums import TileState, GameType, GameState, Difficulty
@@ -46,6 +47,7 @@ class Game:
         logic: Logic = None,
         running: bool = True,
         winner: int = 0,
+        players: List[str] = [],
     ) -> None:
         """Initialize logic, board, and players
 
@@ -63,7 +65,7 @@ class Game:
         # game_type = 2: AI Game
         # game_type = 3: Online Game
         self.game_type = GameType(game_type)
-        self.lock = asyncio.Lock()
+        self.players = players
 
     def reset(self):
         self.logic = Logic(self.size)
@@ -78,7 +80,7 @@ class Game:
             y (int): y-position of given move
 
         Returns:
-            bool: True if move was successful. False on error.
+            bool: True if game is not over after the move
         """
         # print(f"Making move at [{x}, {y}]")
         # pass Move to logic for calculating and updating
@@ -158,7 +160,6 @@ class Game:
         else:
             return 0
 
-
     @property
     def current_turn(self) -> GameState:
         """Returns the current player
@@ -177,6 +178,7 @@ class Game:
             "size": self.size,
             "difficulty": self.difficulty,
             "game_type": self.game_type,
+            "players": self.players,
         }
 
     @classmethod
@@ -189,5 +191,6 @@ class Game:
             Logic.from_dict(data.get("logic")),
             data.get("running"),
             data.get("winner"),
+            data.get("players"),
         )
         return game

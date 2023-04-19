@@ -107,6 +107,10 @@ class Logic:
                 The tiles that would be flipped from this move
         """
 
+        # sanity check
+        if not (0 <= move.row < self.size) or not (0 <= move.col < self.size):
+            return []
+
         # fmt: off
         border = [[-1, -1], [0, -1], [1, -1],
                   [-1, 0],           [1, 0],
@@ -117,41 +121,53 @@ class Logic:
         # Check each border tile
         for i in range(8):
             x_offset, y_offset = border[i]
-
+            # print("checking path ", i, " along x ", x_offset, " and y ", y_offset)
             # Get the position of border tile with relative offset
             x = move.col + x_offset
             y = move.row + y_offset
-
-            # Continue if border tile is within board limits
-            if x < 0 or x >= self.size or y < 0 or y >= self.size:
-                continue
-
-            # Begin tracking path starting at border tile
-            current_time = self.board.get_tile(x, y)
             temp = []
-
-            # Stop if board edge reached OR tile belongs to opposing player
-            while (
-                0 <= current_time.x < self.size - 1
-                and 0 <= current_time.y < self.size - 1
-            ) and 3 - current_time.player == player:
-                # If path tile is potentially flippable, save it in temp list
-                temp.append(current_time)
-
-                # Step along path using relative offset of border tile
-                current_time = self.board.get_tile(
-                    current_time.x + x_offset, current_time.y + y_offset
-                )
-
-            # If stopped by tile belonging to opposing player, save path
+            # Check if first path tile is within board limits and belongs to other player
             if (
-                0 <= x < self.size and 0 <= y < self.size
-            ) and current_time.player == player:
-                flipped += temp
+                (0 <= x < self.size)
+                and (0 <= y < self.size)
+                and self.board.get_tile(x, y).player == 3 - player
+            ):
+                x += x_offset
+                y += y_offset
 
-            # If stopped by tile being outside of board, discard path
-            # Continue to check next path direction
+                # Skip path if tile is out of board limits
+                if self.size <= x or x < 0 or self.size <= y or y < 0:
+                    continue
 
+                # track tiles along each potential path
+                # temp.append(self.board.get_tile(x, y))
+
+                # loop through path tiles until your end tile is found
+                while self.board.get_tile(x, y).player == 3 - player:
+                    x += x_offset
+                    y += y_offset
+
+                    # break if out of bounds
+                    if self.size <= x or x < 0 or self.size <= y or y < 0:
+                        break
+                    # print("Temp tile found at ", x, ", ", y)
+                    # temp.append(self.board.get_tile(x, y))
+
+                # At this point the path has ended either out of bounds
+                #  or at a tile that is empty or belongs to current player
+
+                # Skip if path terminates out of bounds
+                if self.size <= x or x < 0 or self.size <= y or y < 0:
+                    continue
+
+                if self.board.get_tile(x, y).player == player:
+                    while True:
+                        x -= x_offset
+                        y -= y_offset
+
+                        if (x, y) == (move.col, move.row):
+                            break
+                        flipped.append(self.board.get_tile(x, y))
         # Once all paths checked, return list of all tiles to be flipped
         return flipped
 
@@ -225,7 +241,7 @@ class Logic:
                 return False
 
         # If other player cannot move, game is over
-        if not self.find_valid_moves(True, player=self.opposite_player):
+        if len(self.find_valid_moves(False, self.opposite_player)) == 0:
             return True
 
         # If other player can move, game is over

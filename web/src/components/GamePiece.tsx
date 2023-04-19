@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
-import { makeMove } from "../services/backendservice";
 import { GameState, GameType, TileState } from "../types/Enums";
 import { GameData } from "../types/GameData";
+import socket from "../services/websocket";
 
 export const GamePiece = ({
   state,
   idx,
   gameData,
-  updateBoard,
   player1Color,
   player2Color,
+  playerNum,
 }: {
   state: TileState;
   idx: number;
   gameData: GameData;
-  updateBoard: (data: GameData) => void;
   player1Color: string;
   player2Color: string;
+  playerNum: GameState
 }) => {
   /*
     #   0 if empty
@@ -30,17 +30,10 @@ export const GamePiece = ({
   const [lastColorState, setLastColorState] = useState<TileState | undefined>();
   const [angle, setAngle] = useState<number>(0);
 
-  const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
-
   const onClick = async () => {
     if (state !== TileState.VIABLE) return;
 
-    const data = await makeMove(idx, gameData.id);
-    updateBoard(data[0]);
-    if (data.length > 1) {
-      await delay(1000);
-      updateBoard(data[1]);
-    }
+    socket.emit("makeMove", gameData.id, idx);
   };
 
   useEffect(() => {
@@ -63,7 +56,8 @@ export const GamePiece = ({
     style = { backgroundColor: colors[colorState] };
   } else if (
     gameData.type == GameType.LOCAL ||
-    (gameData.type == GameType.AI && gameData.state != GameState.PLAYER2)
+    (gameData.type == GameType.AI && gameData.state != GameState.PLAYER2) ||
+    gameData.type == GameType.ONLINE && playerNum == gameData.state
   ) {
     // Hide picks if vs AI and its AI turn
     // Pickable piece
