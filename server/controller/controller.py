@@ -171,7 +171,6 @@ class GameController:
             self.games[board_id].calculate_elos(player2, player1, score[1] - score[0])
         return wint
 
-
     def get_leaderboard(self):
         user_objs = UserDao().fetch_users().sort({ "elo" : -1, "username" : 1})
 
