@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { Difficulty, GameState, GameType } from "../types/Enums";
+import { Difficulty, GameType } from "../types/Enums";
 import { GameData } from "../types/GameData";
 import Modal from "./Modal";
 import socket from "../services/websocket";

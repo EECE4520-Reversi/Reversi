@@ -6,6 +6,7 @@ import { GameState } from "../types/Enums";
 import socket from "../services/websocket";
 import { UserData } from "../types/UserData";
 
+<<<<<<< HEAD
 const Board = ({
   gameData,
   userData,
@@ -13,6 +14,9 @@ const Board = ({
   gameData: GameData;
   userData: UserData | undefined;
 }) => {
+=======
+const Board = ({ gameData }: { gameData: GameData }) => {
+>>>>>>> 40bf264c4db7b2710872012bc1f659e17a41fd14
   const [gameOverVisible, setGameOverVisible] = useState<boolean>(false);
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
   const [boardColor, setBoardColor] = useState<string>("#18843c");
@@ -20,6 +24,10 @@ const Board = ({
   const [player2Color, setPlayer2Color] = useState<string>("#000000");
   const [yourScore, setYourScore] = useState<number>(0);
   const [opponentScore, setOpponentScore] = useState<number>(0);
+
+  const resetBoard = () => {
+    socket.emit("resetBoard", gameData.id);
+  };
 
   useEffect(() => {
     setGameOverVisible(gameData.state === GameState.GAMEOVER);
@@ -64,6 +72,16 @@ const Board = ({
 
   return (
     <div className="p-3">
+<<<<<<< HEAD
+=======
+      <button
+        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+        onClick={resetBoard}
+      >
+        Reset
+      </button>
+
+>>>>>>> 40bf264c4db7b2710872012bc1f659e17a41fd14
       <button
         className="ml-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
         onClick={() => setSettingsVisible(true)}
@@ -90,7 +108,10 @@ const Board = ({
                 gameData={gameData}
                 player1Color={player1Color}
                 player2Color={player2Color}
+<<<<<<< HEAD
                 userData={userData}
+=======
+>>>>>>> 40bf264c4db7b2710872012bc1f659e17a41fd14
               />
             ))}
         </div>

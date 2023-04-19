@@ -10,14 +10,20 @@ export const GamePiece = ({
   gameData,
   player1Color,
   player2Color,
+<<<<<<< HEAD
   userData,
+=======
+>>>>>>> 40bf264c4db7b2710872012bc1f659e17a41fd14
 }: {
   state: TileState;
   idx: number;
   gameData: GameData;
   player1Color: string;
   player2Color: string;
+<<<<<<< HEAD
   userData: UserData | undefined;
+=======
+>>>>>>> 40bf264c4db7b2710872012bc1f659e17a41fd14
 }) => {
   /*
     #   0 if empty
@@ -30,6 +36,8 @@ export const GamePiece = ({
   const [colorState, setColorState] = useState<TileState>(state);
   const [lastColorState, setLastColorState] = useState<TileState | undefined>();
   const [angle, setAngle] = useState<number>(0);
+
+  const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
   const onClick = async () => {
     if (state !== TileState.VIABLE) return;
@@ -58,8 +66,12 @@ export const GamePiece = ({
   } else if (
     gameData.type == GameType.LOCAL ||
     (gameData.type == GameType.AI && gameData.state != GameState.PLAYER2) ||
+<<<<<<< HEAD
     (gameData.type == GameType.ONLINE &&
       userData?.username === gameData.currentTurn)
+=======
+    gameData.type == GameType.ONLINE // TODO: Add condition to show pickable pieces if its our turn currently
+>>>>>>> 40bf264c4db7b2710872012bc1f659e17a41fd14
   ) {
     // Hide picks if vs AI and its AI turn
     // Pickable piece
