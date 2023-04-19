@@ -16,15 +16,12 @@ const Game = ({
 }) => {
   useEffect(() => {
     socket.emit("updateBoard", boardID);
-    console.log(`Refreshing ${boardID}`);
   }, []);
 
   return (
     <>
       <div className="grid place-items-center">
-        <h1 className="text-8xl text-white-200 font-bold mb-5">
-          Reversi {boardID}
-        </h1>
+        <h1 className="text-8xl text-white-200 font-bold mb-5">Reversi</h1>
         {gameData && (
           <>
             <Board gameData={gameData} userData={userData} />
