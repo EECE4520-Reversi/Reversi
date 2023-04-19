@@ -47,7 +47,7 @@ class Game:
         logic: Logic = None,
         running: bool = True,
         winner: int = 0,
-        players: List[str] = None,
+        players: List[str] = [],
     ) -> None:
         """Initialize logic, board, and players
 
@@ -80,7 +80,7 @@ class Game:
             y (int): y-position of given move
 
         Returns:
-            bool: True if move was successful. False on error.
+            bool: True if game is not over after the move
         """
         # print(f"Making move at [{x}, {y}]")
         # pass Move to logic for calculating and updating

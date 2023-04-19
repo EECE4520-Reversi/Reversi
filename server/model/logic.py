@@ -108,7 +108,7 @@ class Logic:
         """
 
         # sanity check
-        if not (0 < move.row < self.size) or not (0 < move.col < self.size):
+        if not (0 <= move.row < self.size) or not (0 <= move.col < self.size):
             return []
 
         # fmt: off
@@ -130,7 +130,7 @@ class Logic:
             if (
                 (0 <= x < self.size)
                 and (0 <= y < self.size)
-                and self.board.get_tile(x, y).player == 3 - self.current_player
+                and self.board.get_tile(x, y).player == 3 - player
             ):
                 x += x_offset
                 y += y_offset
@@ -143,7 +143,7 @@ class Logic:
                 # temp.append(self.board.get_tile(x, y))
 
                 # loop through path tiles until your end tile is found
-                while self.board.get_tile(x, y).player == 3 - self.current_player:
+                while self.board.get_tile(x, y).player == 3 - player:
                     x += x_offset
                     y += y_offset
 
@@ -160,7 +160,7 @@ class Logic:
                 if self.size <= x or x < 0 or self.size <= y or y < 0:
                     continue
 
-                if self.board.get_tile(x, y).player == self.current_player:
+                if self.board.get_tile(x, y).player == player:
                     while True:
                         x -= x_offset
                         y -= y_offset
@@ -241,7 +241,7 @@ class Logic:
                 return False
 
         # If other player cannot move, game is over
-        if not self.find_valid_moves(True, player=self.opposite_player):
+        if len(self.find_valid_moves(False, self.opposite_player)) == 0:
             return True
 
         # If other player can move, game is over
