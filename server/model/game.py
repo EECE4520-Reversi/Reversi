@@ -6,6 +6,7 @@ from model.board import Board
 from model.enums import TileState, GameType, GameState
 from model.logic import Logic
 from model.move import Move
+from model.user import User
 
 
 class Game:
@@ -184,6 +185,14 @@ class Game:
             return 2
         else:
             return 0
+
+    def calculate_elos(self, winner: User, loser: User, score_diff):
+        default_elo_change = 30
+        elo_diff_factor = (loser.get_elo() - winner.get_elo())/50
+        score_diff_factor = score_diff/20
+        scaled_elo_change = default_elo_change + elo_diff_factor + score_diff_factor
+        winner.gain_elo(scaled_elo_change)
+        loser.lose_elo(scaled_elo_change)
 
     def minimax_decision(self, board: Board, search_depth: int = 3) -> Move:
         """ "Given a board, assuming it is player 2's turn,
