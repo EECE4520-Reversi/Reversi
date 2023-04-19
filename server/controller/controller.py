@@ -213,7 +213,8 @@ class GameController:
 
 
     def get_leaderboard(self):
-        user_objs = UserDao().fetch_users().sort({ "elo" : -1, "username" : 1})
+        return UserDao().fetch_users().sort({ "elo" : -1, "username" : 1})
+
 
     # returns an array of the game score in the form of [whiteScore, blackScore]
     def get_score(self, board_id: str) -> List[int]:
