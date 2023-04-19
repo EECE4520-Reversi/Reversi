@@ -8,7 +8,7 @@ class UserDao:
 
     def save_user(self, user: User):
         BaseDao().db[self.collection].replace_one(
-            {"_username": user.username}, user.to_dict(), upsert=True
+            {"username": user.username}, user.to_dict(), upsert=True
         )
         return user
 
