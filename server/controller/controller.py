@@ -280,5 +280,4 @@ class GameController:
                 "size": game.size, "state": game.running, "type": game.game_type}
             for board_id, game in self.games.items()
             if self.online_players[sid] == game.players[1] or self.online_players[sid] == game.players[1]
-
         ]

@@ -77,7 +77,6 @@ async def create_game(sid: str, size: int, difficult: int, gamemode: int):
     await socket_manager.emit("openGames", controller.joinable_games())
     return board_id
 
-
 @socket_manager.on("joinGame")
 async def join_game(sid: str, board_id: str):
     username = controller.online_players.get(sid)
