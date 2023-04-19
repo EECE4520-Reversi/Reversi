@@ -4,24 +4,31 @@ import { GameData } from "../types/GameData";
 import Modal from "./Modal";
 import { GameState } from "../types/Enums";
 import socket from "../services/websocket";
+import { UserData } from "../types/UserData";
 
-const Board = ({ gameData }: { gameData: GameData }) => {
+const Board = ({
+  gameData,
+  userData,
+}: {
+  gameData: GameData;
+  userData: UserData | undefined;
+}) => {
   const [gameOverVisible, setGameOverVisible] = useState<boolean>(false);
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
   const [boardColor, setBoardColor] = useState<string>("#18843c");
   const [player1Color, setPlayer1Color] = useState<string>("#ffffff");
   const [player2Color, setPlayer2Color] = useState<string>("#000000");
-
-  const resetBoard = () => {
-    socket.emit("resetBoard", gameData.id);
-  };
+  const [yourScore, setYourScore] = useState<number>(0);
+  const [opponentScore, setOpponentScore] = useState<number>(0);
 
   useEffect(() => {
     setGameOverVisible(gameData.state === GameState.GAMEOVER);
-  }, [gameData.state]);
+    setYourScore(gameData.players[0] === userData?.username ? gameData.score[0] : gameData.score[1]);
+    setOpponentScore(gameData.players[1] === userData?.username ? gameData.score[0] : gameData.score[1]);
+  }, [gameData]);
 
   const youWin = <h1 className="text-xl">You Win!</h1>;
-  const youlose = <h1 className="text-xl">You Lose!</h1>;
+  const youLose = <h1 className="text-xl">You Lose!</h1>;
 
   const settingsComponent = (
     <div className="grid">
@@ -58,13 +65,6 @@ const Board = ({ gameData }: { gameData: GameData }) => {
   return (
     <div className="p-3">
       <button
-        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-        onClick={resetBoard}
-      >
-        Reset
-      </button>
-
-      <button
         className="ml-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
         onClick={() => setSettingsVisible(true)}
       >
@@ -72,8 +72,8 @@ const Board = ({ gameData }: { gameData: GameData }) => {
       </button>
 
       <div className="flex justify-around mt-5">
-        <h3>Your Score: {gameData.score[0]}</h3>
-        <h3>Opponent Score: {gameData.score[1]}</h3>
+        <h3>Your Score: {yourScore}</h3>
+        <h3>Opponent Score: {opponentScore}</h3>
       </div>
 
       <div className="flex items-center justify-center">
@@ -90,6 +90,7 @@ const Board = ({ gameData }: { gameData: GameData }) => {
                 gameData={gameData}
                 player1Color={player1Color}
                 player2Color={player2Color}
+                userData={userData}
               />
             ))}
         </div>
@@ -100,7 +101,14 @@ const Board = ({ gameData }: { gameData: GameData }) => {
         setVisibility={setGameOverVisible}
         title="Game Over"
         submitText="Create"
-        component={gameData.score[0] > gameData.score[1] ? youWin : youlose}
+        component={
+          (gameData.score[0] > gameData.score[1] &&
+            gameData.players[0] == userData?.username) ||
+          (gameData.score[0] < gameData.score[1] &&
+            gameData.players[1] == userData?.username)
+            ? youWin
+            : youLose
+        }
       />
 
       <Modal

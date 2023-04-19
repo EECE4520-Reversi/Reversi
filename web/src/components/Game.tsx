@@ -3,13 +3,16 @@ import Board from "./Board";
 import socket from "../services/websocket";
 import { GameData } from "../types/GameData";
 import { UserData } from "../types/UserData";
+import { GameState } from "../types/Enums";
 
 const Game = ({
   gameData,
   boardID,
+  userData,
 }: {
   gameData: GameData | undefined;
   boardID: string;
+  userData: UserData | undefined;
 }) => {
   useEffect(() => {
     socket.emit("updateBoard", boardID);
@@ -24,7 +27,7 @@ const Game = ({
         </h1>
         {gameData && (
           <>
-            <Board gameData={gameData} />
+            <Board gameData={gameData} userData={userData} />
           </>
         )}
       </div>

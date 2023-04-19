@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { GameState, GameType, TileState } from "../types/Enums";
 import { GameData } from "../types/GameData";
 import socket from "../services/websocket";
+import { UserData } from "../types/UserData";
 
 export const GamePiece = ({
   state,
@@ -9,12 +10,14 @@ export const GamePiece = ({
   gameData,
   player1Color,
   player2Color,
+  userData,
 }: {
   state: TileState;
   idx: number;
   gameData: GameData;
   player1Color: string;
   player2Color: string;
+  userData: UserData | undefined;
 }) => {
   /*
     #   0 if empty
@@ -27,8 +30,6 @@ export const GamePiece = ({
   const [colorState, setColorState] = useState<TileState>(state);
   const [lastColorState, setLastColorState] = useState<TileState | undefined>();
   const [angle, setAngle] = useState<number>(0);
-
-  const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
   const onClick = async () => {
     if (state !== TileState.VIABLE) return;
@@ -57,7 +58,8 @@ export const GamePiece = ({
   } else if (
     gameData.type == GameType.LOCAL ||
     (gameData.type == GameType.AI && gameData.state != GameState.PLAYER2) ||
-    gameData.type == GameType.ONLINE // TODO: Add condition to show pickable pieces if its our turn currently
+    (gameData.type == GameType.ONLINE &&
+      userData?.username === gameData.currentTurn)
   ) {
     // Hide picks if vs AI and its AI turn
     // Pickable piece

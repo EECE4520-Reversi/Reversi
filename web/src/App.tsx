@@ -16,6 +16,10 @@ const App = () => {
   const [boardID, setBoardID] = useState<string>("");
 
   useEffect(() => {
+    socket.on("userdata", (data: UserData) => {
+      setUserData(data);
+    });
+
     socket.on("players", (data: string[]) => {
       console.log(`Online players: ${data}`);
     });
@@ -38,9 +42,11 @@ const App = () => {
         />
         <Route
           path="/game"
-          element={<Game gameData={gameData} boardID={boardID} />}
+          element={
+            <Game gameData={gameData} boardID={boardID} userData={userData} />
+          }
         />
-        <Route path="/login" element={<Login setUserData={setUserData} />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   );
