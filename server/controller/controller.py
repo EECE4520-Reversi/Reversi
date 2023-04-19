@@ -37,11 +37,12 @@ class GameController:
 
     def __init__(self) -> None:
         self.games: Dict[str, Game] = {}
-        self.online_players: Dict[str, str] = {}  # TODO: Change from just names?
+        # TODO: Change from just names?
+        self.online_players: Dict[str, str] = {}
         for db_game in GameDao().fetch_games():
             game = Game.from_dict(db_game)
             self.games[game.board_id] = game
-        
+
         self.easy_ai = AI_Easy()
         self.medium_ai = AI_Medium()
         self.hard_ai = AI_Hard()
@@ -125,7 +126,7 @@ class GameController:
 
         GameDao().save_game(game)
         return datas
-    
+
     def take_ai_turn(self, game: Game, ai: AI) -> bool:
         """Calls necessary logic to interpret an AI's move
         Returns:
@@ -267,4 +268,13 @@ class GameController:
             {"id": board_id, "player": game.players[0], "size": game.size}
             for board_id, game in self.games.items()
             if len(game.players) == 1 and game.game_type == GameType.ONLINE
+        ]
+
+    def loadable_games(self, sid: str):
+        return [
+            {"id": board_id, "player1": game.players[0], "player2": game.players[1],
+                "size": game.size, "state": game.running, "type": game.game_type}
+            for board_id, game in self.games.items()
+            if self.online_players[sid] == game.players[1] or self.online_players[sid] == game.players[1]
+
         ]

@@ -10,7 +10,8 @@ from fastapi import FastAPI, HTTPException
 load_dotenv()
 app = FastAPI()
 controller = GameController()
-socket_manager = SocketManager(app, cors_allowed_origins="*", mount_location="/")
+socket_manager = SocketManager(
+    app, cors_allowed_origins="*", mount_location="/")
 
 
 @socket_manager.on("connect")
@@ -81,6 +82,13 @@ async def join_game(sid: str, board_id: str):
     await socket_manager.emit("board", controller.get_data(board_id))
 
 
+# TODO: implement loadGame
+@socket_manager.on("loadGame")
+async def load_game(sid: str, board_id: str):
+    await socket_manager.emit("loadGames", controller.loadable_games())
+    await socket_manager.emit("board", controller.get_data(board_id))
+
+
 @socket_manager.on("register")
 async def register_user(sid: str, username: str, password: str):
     if not controller.user_exists(username):
@@ -114,8 +122,13 @@ async def logout_user(sid: str):
 
 
 @socket_manager.on("joinableGames")
-async def joinable_games(sid: str):
+async def joinable_games():
     return controller.joinable_games()
+
+
+@socket_manager.on("loadableGames")
+async def loadable_games(sid: str):
+    return controller.loadable_games(sid)
 
 
 if __name__ == "__main__":

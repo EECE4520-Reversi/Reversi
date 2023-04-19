@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { GameData } from "../types/GameData";
 import NewGame from "./NewGame";
 import JoinGame from "./JoinGame";
+import LoadGame from "./LoadGame";
 import { GameState } from "../types/Enums";
 
 const Home = ({
@@ -19,8 +20,9 @@ const Home = ({
         <h1 className="col-span-3 text-9xl font-bold">Reversi</h1>
 
         <div className="col-span-3 gap-5 flex">
-          <NewGame gameData={gameData} setBoardID={setBoardID} setPlayerNum={setPlayerNum}/>
-          <JoinGame setBoardID={setBoardID}  setPlayerNum={setPlayerNum}/>
+          <NewGame gameData={gameData} setBoardID={setBoardID} setPlayerNum={setPlayerNum} />
+          <LoadGame setBoardID={setBoardID} />
+          <JoinGame setBoardID={setBoardID} setPlayerNum={setPlayerNum} />
         </div>
       </div>
     </div>
