@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { GameData } from "../types/GameData";
 import NewGame from "./NewGame";
 import JoinGame from "./JoinGame";
+import LoadGame from "./LoadGame";
 
 const Home = ({
   gameData,
@@ -17,6 +18,7 @@ const Home = ({
 
         <div className="col-span-3 gap-5 flex">
           <NewGame gameData={gameData} setBoardID={setBoardID} />
+          <LoadGame setBoardID={setBoardID} />
           <JoinGame setBoardID={setBoardID} />
         </div>
       </div>
