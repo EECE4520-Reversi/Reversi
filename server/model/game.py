@@ -2,6 +2,7 @@ import asyncio
 import copy
 from typing import List
 
+from dao.userdao import UserDao
 from model.board import Board
 from model.enums import TileState, GameType, GameState, Difficulty
 from model.logic import Logic
@@ -167,6 +168,8 @@ class Game:
         scaled_elo_change = default_elo_change + elo_diff_factor + score_diff_factor
         winner.gain_elo(scaled_elo_change)
         loser.lose_elo(scaled_elo_change)
+        UserDao().save_user(winner)
+        UserDao().save_user(loser)
 
     @property
     def current_turn(self) -> GameState:
