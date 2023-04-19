@@ -41,7 +41,7 @@ class GameController:
         for db_game in GameDao().fetch_games():
             game = Game.from_dict(db_game)
             self.games[game.board_id] = game
-        
+
         self.easy_ai = AI_Easy()
         self.medium_ai = AI_Medium()
         self.hard_ai = AI_Hard()
@@ -125,7 +125,7 @@ class GameController:
 
         GameDao().save_game(game)
         return datas
-    
+
     def take_ai_turn(self, game: Game, ai: AI) -> bool:
         """Calls necessary logic to interpret an AI's move
         Returns:
@@ -202,19 +202,22 @@ class GameController:
                 2: black
         """
         wint = self.games[board_id].end_game()
-        player1 = User.from_dict(UserDao().fetch_specific_user(self.games[board_id].players[0]))
-        player2 = User.from_dict(UserDao().fetch_specific_user(self.games[board_id].players[1]))
-        score = self.games[board_id].get_score()
-        if wint == 1:
-            self.games[board_id].calculate_elos(player1, player2, score[0] - score[1])
-        elif wint == 2:
-            self.games[board_id].calculate_elos(player2, player1, score[1] - score[0])
+
+        p1_user = UserDao().fetch_specific_user(self.games[board_id].players[0])
+        p2_user = UserDao().fetch_specific_user(self.games[board_id].players[0])
+        if p1_user and p2_user:
+            player1 = User.from_dict(p1_user)
+            player2 = User.from_dict(p2_user)
+
+            score = self.games[board_id].get_score()
+            if wint == 1:
+                self.games[board_id].calculate_elos(player1, player2, score[0] - score[1])
+            elif wint == 2:
+                self.games[board_id].calculate_elos(player2, player1, score[1] - score[0])
         return wint
 
-
     def get_leaderboard(self):
-        return UserDao().fetch_users().sort({ "elo" : -1, "username" : 1})
-
+        return list(UserDao().fetch_users().sort("elo", -1))
 
     # returns an array of the game score in the form of [whiteScore, blackScore]
     def get_score(self, board_id: str) -> List[int]:
@@ -260,7 +263,9 @@ class GameController:
             "difficulty": game.difficulty,
             "type": game.game_type,
             "players": game.players,
-            "currentTurn": game.players[game.current_turn - 1] if len(game.players) > game.current_turn - 1 else None
+            "currentTurn": game.players[game.current_turn - 1]
+            if len(game.players) > game.current_turn - 1
+            else None,
         }
 
     def register_user(self, sid: str, username: str, password: str):

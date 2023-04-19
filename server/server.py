@@ -124,9 +124,11 @@ async def logout_user(sid: str):
 async def joinable_games(sid: str):
     return controller.joinable_games()
 
+
 @socket_manager.on("getLeaderboard")
 async def get_leaderboard(sid: str):
-    return controller.get_leaderboard()
+    data = [User.from_dict(data).to_dict() for data in controller.get_leaderboard()]
+    await socket_manager.emit("leaderboard", data, to=sid)
 
 
 if __name__ == "__main__":
