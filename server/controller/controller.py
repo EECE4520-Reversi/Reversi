@@ -204,7 +204,7 @@ class GameController:
         wint = self.games[board_id].end_game()
 
         p1_user = UserDao().fetch_specific_user(self.games[board_id].players[0])
-        p2_user = UserDao().fetch_specific_user(self.games[board_id].players[0])
+        p2_user = UserDao().fetch_specific_user(self.games[board_id].players[1])
         if p1_user and p2_user:
             player1 = User.from_dict(p1_user)
             player2 = User.from_dict(p2_user)
