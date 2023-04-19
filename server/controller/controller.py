@@ -202,22 +202,6 @@ class GameController:
                 2: black
         """
         wint = self.games[board_id].end_game()
-
-        p1_user = UserDao().fetch_specific_user(self.games[board_id].players[0])
-        p2_user = UserDao().fetch_specific_user(self.games[board_id].players[1])
-        if p1_user and p2_user:
-            player1 = User.from_dict(p1_user)
-            player2 = User.from_dict(p2_user)
-
-            score = self.games[board_id].get_score()
-            if wint == 1:
-                self.games[board_id].calculate_elos(
-                    player1, player2, score[0] - score[1]
-                )
-            elif wint == 2:
-                self.games[board_id].calculate_elos(
-                    player2, player1, score[1] - score[0]
-                )
         return wint
 
     def get_leaderboard(self):

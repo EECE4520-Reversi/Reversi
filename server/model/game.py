@@ -49,7 +49,7 @@ class Game:
         logic: Logic = None,
         running: bool = True,
         winner: int = 0,
-        players: List[str] = [],
+        players: List[str] = None,
     ) -> None:
         """Initialize logic, board, and players
 
@@ -67,7 +67,7 @@ class Game:
         # game_type = 2: AI Game
         # game_type = 3: Online Game
         self.game_type = GameType(game_type)
-        self.players = players
+        self.players = players or []
 
     def reset(self):
         self.logic = Logic(self.size)
@@ -95,8 +95,11 @@ class Game:
 
         # check if game is over
         if self.game_over():
-            # get winner and end turn
+
             self.winner = self.end_game()
+            self.calculate_elos(self.winner)
+
+            # get winner and end turn
             return False
 
         # end turn
@@ -161,15 +164,34 @@ class Game:
         else:
             return 0
 
-    def calculate_elos(self, winner: User, loser: User, score_diff):
-        default_elo_change = 30
-        elo_diff_factor = (loser.get_elo() - winner.get_elo()) // 50
-        score_diff_factor = score_diff // 20
-        scaled_elo_change = default_elo_change + elo_diff_factor + score_diff_factor
-        winner.gain_elo(scaled_elo_change)
-        loser.lose_elo(scaled_elo_change)
-        UserDao().save_user(winner)
-        UserDao().save_user(loser)
+    def calculate_elos(self, winner_num: int):
+
+        p1_user = UserDao().fetch_specific_user(self.players[0])
+        p2_user = UserDao().fetch_specific_user(self.players[1])
+        if p1_user and p2_user:
+            player1 = User.from_dict(p1_user)
+            player2 = User.from_dict(p2_user)
+
+            score = self.get_score()
+            if winner_num == 1:
+                winner = player1
+                loser = player2
+                score_diff = score[0] - score[1]
+            elif winner_num == 2:
+                winner = player2
+                loser = player1
+                score_diff = score[1] - score[0]
+            else:
+                return
+
+            default_elo_change = 30
+            elo_diff_factor = (loser.get_elo() - winner.get_elo()) // 50
+            score_diff_factor = score_diff // 20
+            scaled_elo_change = default_elo_change + elo_diff_factor + score_diff_factor
+            winner.gain_elo(scaled_elo_change)
+            loser.lose_elo(scaled_elo_change)
+            UserDao().save_user(winner)
+            UserDao().save_user(loser)
 
     @property
     def current_turn(self) -> GameState:
