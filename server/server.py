@@ -85,6 +85,10 @@ async def join_game(sid: str, board_id: str):
     await socket_manager.emit("openGames", controller.joinable_games())
     await socket_manager.emit("board", controller.get_data(board_id))
 
+@socket_manager.on("loadGame")
+async def load_game(sid: str, board_id: str):
+    await socket_manager.emit("loadGames", controller.loadable_games(sid))
+    await socket_manager.emit("board", controller.get_data(board_id))
 
 @socket_manager.on("register")
 async def register_user(sid: str, username: str, password: str):
@@ -121,9 +125,12 @@ async def logout_user(sid: str):
 
 
 @socket_manager.on("joinableGames")
-async def joinable_games(sid: str):
+async def joinable_games():
     return controller.joinable_games()
 
+@socket_manager.on("loadableGames")
+async def loadable_games(sid: str):
+    return controller.loadable_games(sid)
 
 if __name__ == "__main__":
     import uvicorn
