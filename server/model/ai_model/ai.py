@@ -1,24 +1,15 @@
+from abc import abstractmethod
 from model.board import Board
 from model.enums import TileState, GameState
 from model.game import Game
 from model.move import Move
-
+import copy
 
 class AI:
     """A class to represent AI agents to play against the user
 
-    ...
-
     Attributes
     ----------
-    difficulty : int
-        the difficulty level of the AI
-        0 = easy (search depth = 1)
-        1 = medium (search depth = 2)
-        2 = hard (search_depth = 3)
-
-    search_depth : int
-        the depth of the search for the minimax algorithm
 
     Methods
     -------
@@ -30,25 +21,29 @@ class AI:
         Given a board, finds the heuristic value of the board
     """
 
-    def __init__(self) -> None:
-        """Constructs all necessary attributes for an AI player"""
+    @property
+    @abstractmethod
+    def difficulty(self):
+        pass
 
-    def minimax_decision(self, board: Board, search_depth: int = 1) -> Move:
-        """ "Given a board, returns the move that is best to take for the AI"""
+    def minimax_decision(self, board: Board) -> Move:
+        """Given a board, assuming it is player 2's turn,
+        returns the move that is best to take for player 2"""
         for row in board.matrix:
             for tile in row:
                 if tile.player == TileState.VIABLE:
                     # create a temporary game to calculate moves made on this tile
                     temp_game = Game(size=board.size)
                     temp_game.logic.current_player = GameState.PLAYER2
-                    temp_game.logic.board = board
+                    temp_game.logic.board = copy.deepcopy(board)
 
                     # take the next turn with the current valid tile
                     temp_game.take_turn(tile.x, tile.y)
                     tile.minimax_score = self.minimax(
-                        temp_game.logic.board, GameState.PLAYER1, 1, search_depth
+                        temp_game.logic.board, GameState.PLAYER1, 1, self.difficulty
                     )
 
+        # sift through board, find minimum score and return the move
         move = None
         min_score = 9999
         for row in board.matrix:
@@ -65,7 +60,7 @@ class AI:
     ) -> int:
         """Given a board, board state, the current depth of the algorithm
         Returns the best minimax score of the valid moves"""
-        if board_state != 3 and current_depth != search_depth:
+        if board_state != GameState.GAMEOVER and current_depth <= search_depth:
             # for each valid move, calculate its minimax value
             minimax_values = []
             for row in board.matrix:
@@ -74,7 +69,7 @@ class AI:
                         # create a temporary game to calculate moves made on this tile
                         temp_game = Game(size=board.size)
                         temp_game.logic.current_player = board_state
-                        temp_game.logic.board = board
+                        temp_game.logic.board = copy.deepcopy(board)
 
                         # take the next turn with the current valid tile
                         temp_game.take_turn(tile.x, tile.y)
@@ -84,7 +79,7 @@ class AI:
                            2: Player 2's turn (white)
                            3: Game over"""
                         if temp_game.logic.game_over():
-                            next_state = 3
+                            next_state = GameState.GAMEOVER
                         else:
                             next_state = temp_game.logic.current_player
 
@@ -94,26 +89,21 @@ class AI:
                                 temp_game.logic.board,
                                 next_state,
                                 current_depth + 1,
-                                search_depth=search_depth,
+                                search_depth,
                             )
                         )
 
-            # find the current player based on search depth
             # take the min minimax value if it is AI turn or max value if it is the player
-            if current_depth % 2 == 0:
+            # TODO: min/max raises if it has an empty sequence
+            if not minimax_values:
+                return AI.heuristic(board)
+            elif current_depth % 2 == 0:
                 return min(minimax_values)
             else:
                 return max(minimax_values)
 
-        # if we have reached the end of the search depth, return the heuristic value
-        else:
-            return self.heuristic(board)
+    @abstractmethod
+    def heuristic(self):
+        """Given a board, calculate the heuristic score assuming the player is white (player 1)"""
+        pass
 
-    @staticmethod
-    def heuristic(board: Board):
-        """Given a board, calculate the heuristic score assuming the player is white"""
-        tile_score = board.get_score()
-        # white score - black score
-        heuristic_result = tile_score[0] - tile_score[1]
-
-        return heuristic_result
