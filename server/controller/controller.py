@@ -5,10 +5,10 @@ from dao.userdao import UserDao
 from model.enums import GameType, GameState, TileState, Difficulty
 from model.user import User
 from model.game import Game
-from model.ai_model.ai import AI
-from model.ai_model.ai_easy import AI_Easy
-from model.ai_model.ai_medium import AI_Medium
-from model.ai_model.ai_hard import AI_Hard
+from model.ai import AI
+from model.ai_easy import AI_Easy
+from model.ai_medium import AI_Medium
+from model.ai_hard import AI_Hard
 import hashlib
 
 

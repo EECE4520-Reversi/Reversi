@@ -1,4 +1,4 @@
-from model.ai_model.ai import AI
+from model.ai import AI
 from model.board import Board
 from model.enums import Difficulty
 

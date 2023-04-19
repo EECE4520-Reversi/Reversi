@@ -44,7 +44,6 @@ class AI:
                     )
 
         # sift through board, find minimum score and return the move
-        move = None
         min_score = 9999
         for row in board.matrix:
             for tile in row:
@@ -95,12 +94,12 @@ class AI:
 
             # take the min minimax value if it is AI turn or max value if it is the player
             # TODO: min/max raises if it has an empty sequence
-            if not minimax_values:
-                return AI.heuristic(board)
-            elif current_depth % 2 == 0:
+            if current_depth % 2 == 0:
                 return min(minimax_values)
             else:
                 return max(minimax_values)
+            
+        return self.heuristic(board)
 
     @abstractmethod
     def heuristic(self):
