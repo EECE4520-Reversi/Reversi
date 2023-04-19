@@ -3,14 +3,11 @@ import Modal from "./Modal";
 import socket from "../services/websocket";
 import { JoinableGame } from "../types/JoinableGame";
 import { useNavigate } from "react-router";
-import { GameState } from "../types/Enums";
 
 const JoinGame = ({
   setBoardID,
-  setPlayerNum
 }: {
   setBoardID: Dispatch<SetStateAction<string>>;
-  setPlayerNum: Dispatch<SetStateAction<GameState>>;
 }) => {
   const [openGames, setOpenGames] = useState<JoinableGame[]>([]);
   const [joinModalOpen, setJoinModalOpen] = useState<boolean>(false);
@@ -27,7 +24,6 @@ const JoinGame = ({
       setBoardID(selectedGameID);
       socket.emit("joinGame", selectedGameID);
       console.log(`Joining Game: ${selectedGameID}`);
-      setPlayerNum(2);
       navigate("/game");
     }
   };

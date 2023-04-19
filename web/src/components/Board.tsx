@@ -5,12 +5,16 @@ import Modal from "./Modal";
 import { GameState } from "../types/Enums";
 import socket from "../services/websocket";
 
-const Board = ({ gameData, playerNum }: { gameData: GameData, playerNum: GameState }) => {
+const Board = ({ gameData }: { gameData: GameData }) => {
   const [gameOverVisible, setGameOverVisible] = useState<boolean>(false);
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
   const [boardColor, setBoardColor] = useState<string>("#18843c");
   const [player1Color, setPlayer1Color] = useState<string>("#ffffff");
   const [player2Color, setPlayer2Color] = useState<string>("#000000");
+
+  const resetBoard = () => {
+    socket.emit("resetBoard", gameData.id);
+  };
 
   useEffect(() => {
     setGameOverVisible(gameData.state === GameState.GAMEOVER);
@@ -53,6 +57,12 @@ const Board = ({ gameData, playerNum }: { gameData: GameData, playerNum: GameSta
 
   return (
     <div className="p-3">
+      <button
+        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+        onClick={resetBoard}
+      >
+        Reset
+      </button>
 
       <button
         className="ml-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
@@ -80,7 +90,6 @@ const Board = ({ gameData, playerNum }: { gameData: GameData, playerNum: GameSta
                 gameData={gameData}
                 player1Color={player1Color}
                 player2Color={player2Color}
-                playerNum={playerNum}
               />
             ))}
         </div>
