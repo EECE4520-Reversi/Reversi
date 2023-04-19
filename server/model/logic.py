@@ -241,10 +241,11 @@ class Logic:
                 return False
 
         # If other player cannot move, game is over
-        if len(self.find_valid_moves(False, self.opposite_player)) == 0:
+        if len(self.find_valid_moves(True, self.opposite_player)) == 0:
+            self.switch_players()
             return True
 
-        # If other player can move, game is over
+        # If other player can move, game is not over
         return False
 
     def get_board(self) -> List[int]:
