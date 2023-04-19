@@ -18,13 +18,17 @@ const Board = ({
   const [boardColor, setBoardColor] = useState<string>("#18843c");
   const [player1Color, setPlayer1Color] = useState<string>("#ffffff");
   const [player2Color, setPlayer2Color] = useState<string>("#000000");
+  const [yourScore, setYourScore] = useState<number>(0);
+  const [opponentScore, setOpponentScore] = useState<number>(0);
 
   useEffect(() => {
     setGameOverVisible(gameData.state === GameState.GAMEOVER);
-  }, [gameData.state]);
+    setYourScore(gameData.players[0] === userData?.username ? gameData.score[0] : gameData.score[1]);
+    setOpponentScore(gameData.players[1] === userData?.username ? gameData.score[0] : gameData.score[1]);
+  }, [gameData]);
 
   const youWin = <h1 className="text-xl">You Win!</h1>;
-  const youlose = <h1 className="text-xl">You Lose!</h1>;
+  const youLose = <h1 className="text-xl">You Lose!</h1>;
 
   const settingsComponent = (
     <div className="grid">
@@ -68,8 +72,8 @@ const Board = ({
       </button>
 
       <div className="flex justify-around mt-5">
-        <h3>Your Score: {gameData.score[0]}</h3>
-        <h3>Opponent Score: {gameData.score[1]}</h3>
+        <h3>Your Score: {yourScore}</h3>
+        <h3>Opponent Score: {opponentScore}</h3>
       </div>
 
       <div className="flex items-center justify-center">
@@ -97,7 +101,14 @@ const Board = ({
         setVisibility={setGameOverVisible}
         title="Game Over"
         submitText="Create"
-        component={gameData.score[0] > gameData.score[1] ? youWin : youlose}
+        component={
+          (gameData.score[0] > gameData.score[1] &&
+            gameData.players[0] == userData?.username) ||
+          (gameData.score[0] < gameData.score[1] &&
+            gameData.players[1] == userData?.username)
+            ? youWin
+            : youLose
+        }
       />
 
       <Modal
