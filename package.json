@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "server": "cd server & python wsServer.py",
+    "server": "cd server & python server.py",
     "web": "cd web & npm run dev",
     "start": "concurrently \"npm run server\" \"npm run web\""
   },
