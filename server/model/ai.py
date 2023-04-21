@@ -2,6 +2,7 @@ from model.board import Board
 from model.enums import TileState, GameState
 from model.game import Game
 from model.move import Move
+from abc import abstractmethod
 import copy
 
 

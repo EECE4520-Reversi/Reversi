@@ -276,8 +276,10 @@ class GameController:
 
     def loadable_games(self, sid: str):
         return [
-            {"id": board_id, "player1": game.players[0], "player2": game.players[1],
-                "size": game.size, "state": game.running, "type": game.game_type}
+            {"id": board_id, "type": game.game_type,
+             "players": game.players, "size": game.size, 
+             "status": game.running, "difficulty": game.difficulty}
             for board_id, game in self.games.items()
-            if self.online_players[sid] == game.players[1] or self.online_players[sid] == game.players[1]
+            if game.players.__contains__(self.online_players[sid])
         ]
+    

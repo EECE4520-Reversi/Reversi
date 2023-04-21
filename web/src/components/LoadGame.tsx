@@ -37,7 +37,7 @@ const LoadGame = ({
                     onClick={() => setSelectedGameID(game.id)}
                 >
                     <h1>
-                        {game.type}: {game.player1} vs {game.player2} | {game.size}x{game.size} | {game.status}
+                        {gameDisplayText(game)}
                     </h1>
                 </div>
             ))}
@@ -62,6 +62,35 @@ const LoadGame = ({
             />
         </>
     );
+};
+
+const GameTypeMap = {
+    1: "Local",
+    2: "AI",
+    3: "Online",
+}
+
+const DifficultyMap = {
+    0: "Easy",
+    1: "Medium",
+    2: "Hard",
+}
+
+const StatusMap = {
+    0: "Over",
+    1: "Ongoing",
+}
+
+function gameDisplayText(game: LoadableGame) {
+    switch (game.type) {
+        case 1:
+            return `${GameTypeMap[game.type]}: ${game.size}x${game.size} | ${game.status ? "Ongoing" : "Over"}`
+        case 2:
+            return `${GameTypeMap[game.type]}: ${DifficultyMap[game.difficulty]} | ${game.size}x${game.size} | ${game.status ? "Ongoing" : "Over"}`
+        case 3:
+            return `${GameTypeMap[game.type]}: ${game.players[0]} vs ${game.players[1]} | ${game.size}x${game.size} | ${game.status ? "Ongoing" : "Over"}`
+
+    };
 };
 
 export default LoadGame;

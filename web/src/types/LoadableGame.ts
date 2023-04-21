@@ -1,10 +1,10 @@
-import { GameType } from "./Enums";
+import { GameType, Difficulty } from "./Enums";
 
 export type LoadableGame = {
     id: string;
     type: GameType;
-    player1: string;
-    player2: string;
+    players: Array<String>;
     size: number;
-    status: boolean;
+    status: Boolean;
+    difficulty: Difficulty;
 };

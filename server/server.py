@@ -124,7 +124,7 @@ async def logout_user(sid: str):
 
 
 @socket_manager.on("joinableGames")
-async def joinable_games():
+async def joinable_games(sid: str):
     return controller.joinable_games()
 
 @socket_manager.on("loadableGames")
