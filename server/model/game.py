@@ -194,7 +194,11 @@ class Game:
             return 0
 
     def calculate_elos(self, winner_num: int):
+        """Determines user's new elos based on current elo and game result
 
+        Args:
+            winner_num (int): Player 1 or player 2
+        """
         p1_user = UserDao().fetch_specific_user(self.players[0])
         p2_user = UserDao().fetch_specific_user(self.players[1])
         if p1_user and p2_user:

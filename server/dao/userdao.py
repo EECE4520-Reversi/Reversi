@@ -3,6 +3,8 @@ from model.user import User
 
 
 class UserDao:
+    """Class representing database of user data
+    """
     def __init__(self):
         self.collection = "user"
 

@@ -4,6 +4,8 @@ from pymongo import MongoClient
 
 
 class BaseDao:
+    """Singleton Base Database Object for MongoDB
+    """
     _instance = None
 
     def __new__(cls):

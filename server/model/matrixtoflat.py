@@ -3,6 +3,8 @@ from server.model.tile import Tile
 
 
 class MatrixToFlat:
+    """Adapter class to convert tile matrix to int list for frontend rendering
+    """
     def __init__(self, style):
         self.style = style
 

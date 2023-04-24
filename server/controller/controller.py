@@ -251,6 +251,13 @@ class GameController:
         }
 
     def register_user(self, sid: str, username: str, password: str):
+        """Add user datat to database
+
+        Args:
+            sid (str): session id to associate with user
+            username (str)
+            password (str)
+        """
         self.online_players[sid] = username
         return (
             UserDao()
@@ -259,6 +266,13 @@ class GameController:
         )
 
     def login_user(self, sid: str, username: str, password: str):
+        """Fetch user from database and associate session with user
+
+        Args:
+            sid (str): session id to associate with user
+            username (str)
+            password (str)
+        """
         existingUser = User.from_dict(UserDao().fetch_specific_user(username))
         if existingUser.password == hashlib.sha256(password.encode()).hexdigest():
             self.online_players[sid] = username
@@ -268,6 +282,11 @@ class GameController:
         return UserDao().fetch_specific_user(username)
 
     def joinable_games(self):
+        """Returns list of online games awaiting second player
+
+        Returns:
+            list[dict]: board id, initial player, board size
+        """
         return [
             {"id": board_id, "player": game.players[0], "size": game.size}
             for board_id, game in self.games.items()
@@ -275,6 +294,14 @@ class GameController:
         ]
 
     def loadable_games(self, sid: str):
+        """Returns list of games user participated in
+
+        Args:
+            sid (str): session id to decode user
+
+        Returns:
+            list[dict]: board id, game type, player list, board size, game status, game difficulty
+        """
         return [
             {"id": board_id, "type": game.game_type,
              "players": game.players, "size": game.size, 

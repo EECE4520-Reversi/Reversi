@@ -1,4 +1,11 @@
 class User:
+    """ Class representing user as stored in the database
+
+    Methods:
+        get_elo(): Returns user elo
+        gain_elo(gain: int): Increments user elo by gain
+        lose_elo(loss: int): Decrements user elo by loss
+    """
     def __init__(self, username: str, password: str = None, elo: int = 0):
         self.username = username
         self.password = password
